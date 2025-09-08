@@ -6,6 +6,7 @@
 
 ## Folder Structure
 
+```kotlin
 tensile-analyzer/
 ├── main.py
 ├── tensile_analyzer_notebook.ipynb
@@ -18,6 +19,7 @@ tensile-analyzer/
 │   ├── visualize.py
 │   └── input_validation.py
 └── Tensile_Analyzer_MasterWorkbook.xlsx (place this file manually)
+```
 
 ## Dataset(s)
 
