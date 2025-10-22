@@ -1,6 +1,6 @@
 import pandas as pd
 
-def calculate_engineering_stress_strain(df, A_0, L_0):
+def calculate_stress_strain(df, A_0, L_0):
     """
     This function calculates the engineering and true stress-strain values based on input tensile data.
 
