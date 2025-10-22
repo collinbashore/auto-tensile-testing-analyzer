@@ -21,7 +21,7 @@ def simulate_stress_strain(E, sigma_y, K, n, L_0, A_0, num_points=100):
     strain = np.linspace(0, 0.3, num_points)
     
     # Apply linear elastic region until yield point
-    if strain < sigma_y / E:
+    if strain <= sigma_y / E:
         stress = E * strain  # Hooke’s Law: σ = Eε
     else:
     # Plastic region using Hollomon's law
