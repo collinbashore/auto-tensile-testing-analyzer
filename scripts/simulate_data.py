@@ -3,7 +3,7 @@ import pandas as pd
 
 def simulate_stress_strain(E, sigma_y, K, n, L_0, A_0, num_points=100):
     '''
-    Simulates a stress-strain curve using Hooke's Law + Hollomon models.
+    This function simulates an engineering stress-strain curve using Hooke's Law + Hollomon Law (approximation).
 
     Parameters:
         E (float): Elastic modulus in MPa
@@ -24,10 +24,10 @@ def simulate_stress_strain(E, sigma_y, K, n, L_0, A_0, num_points=100):
     if strain < sigma_y / E:
         stress = E * strain  # Hooke’s Law: σ = Eε
     else:
-    # Plastic region using Hollomon equation
-        stress = K * (strain ** n)
+    # Plastic region using Hollomon's law
+        stress = K * (strain ** n) # Hollomon's Law: σ = K * ε^n
     
-    elongation = strain * L_0
+    elongation = strain * L_0 # Elongation in mm
     force = (stress * 1e6) * (A_0 * 1e-6) # 1 MPa = 10^6 Pa and 1 mm² = 10^(-6) m²
     return pd.DataFrame({
         "Strain": strain,
