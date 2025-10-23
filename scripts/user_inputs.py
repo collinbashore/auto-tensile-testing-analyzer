@@ -28,16 +28,16 @@ def get_user_inputs(file_path):
     dashboard = pd.read_excel(file_path, sheet_name="Dashboard", usecols="B", nrows=7)
 
     # Step 2: Extract individual values
-    material = dashboard.iloc[3, 0] # Material name from cell B3
-    override_A0 = dashboard.iloc[4, 0] # Override A0 from cell B4
-    override_L0 = dashboard.iloc[5, 0] # Override L0 from cell B5
-    use_simulation = dashboard.iloc[6, 0] # Use simulate data (TRUE) or real data (FALSE) from cell B6
+    material = dashboard.iloc[3, 0] # Material name from cell B4
+    override_A0 = dashboard.iloc[4, 0] # Override A0 from cell B5
+    override_L0 = dashboard.iloc[5, 0] # Override L0 from cell B6
+    use_simulation = dashboard.iloc[6, 0] # Use simulate data (TRUE) or real data (FALSE) from cell B7
 
     # Step 3: Begin validations
 
     # Material name must not be empty or NaN
     if pd.isna(material) or not isinstance(material, str) or material.strip() == "":
-        raise ValueError("Material name is missing or invalid. Please select a material in cell B3.")
+        raise ValueError("Material name is missing or invalid. Please select a material in cell B4.")
 
     # A0 and L0 are optional, but if they are provided, they must be positive numbers
     if pd.notna(override_A0):
@@ -50,6 +50,6 @@ def get_user_inputs(file_path):
 
     # use_simulation must be a boolean (TRUE or FALSE in Excel)
     if not isinstance(use_simulation, bool):
-        raise ValueError("Use Simulation must be either TRUE or FALSE in cell B6.")
+        raise ValueError("Use Simulation must be either TRUE or FALSE in cell B7.")
 
     return material, override_A0, override_L0, use_simulation
