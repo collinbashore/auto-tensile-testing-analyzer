@@ -78,3 +78,7 @@ def plot_engineering_true_combined_subplots(df, material_name='Material'):
 
     # Display the plot window
     plt.show()
+    
+    # Return the figure object for further manipulation if needed
+    return fig
+    
