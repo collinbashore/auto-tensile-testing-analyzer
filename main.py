@@ -34,8 +34,9 @@ if use_simulation:
         num_points=100
     )
 else:
+    df_raw = pd.read_excel(input_file, sheet_name="Input_Data")
     df = calculate_stress_strain(
-        pd.read_excel(input_file, sheet_name="Input_Data"),
+        df_raw,
         A_0=A0,
         L_0=L0
     )
