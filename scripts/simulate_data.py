@@ -3,10 +3,6 @@ import pandas as pd
 
 def simulate_stress_strain(E, sigma_y, K, n, L_0, A_0, strain_max=0.3, num_points=100):
     """
-    Simulates both engineering and true stress-strain curves based on 
-    material properties and geometry using Hooke's Law and the expanded 
-    Hollomon's Law.
-
     This function generates synthetic tensile test data that includes:
     - Engineering stress-strain values
     - True stress-strain values
