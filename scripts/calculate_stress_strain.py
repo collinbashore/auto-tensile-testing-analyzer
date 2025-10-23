@@ -25,7 +25,8 @@ def calculate_stress_strain(df, A_0, L_0):
     df['Engineering Strain'] = df['Elongation (mm)'] / L_0
 
     # True stress and strain
-    df['True Strain'] = np.log(1 + df['Engineering Strain']) # np.log is the natural logarithm function
+    df['True Strain'] = np.log(1 + df['Engineering Strain']) 
+    # np.log is the natural logarithm function
     
     df['True Stress (MPa)'] = df['Engineering Stress (MPa)'] * (1 + df['Engineering Strain'])
     
