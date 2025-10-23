@@ -31,14 +31,26 @@ def extract_properties(df, material_name='Unknown'):
     or educational purposes.
     
     ''' 
-    elastic_modulus = df['Engineering Stress (MPa)'].iloc[1] / df['Engineering Strain'].iloc[1]
-    yield_strength = df[df['Engineering Strain'] > 0.002]['Engineering Stress (MPa)'].iloc[0]
-    uts = df['Engineering Stress (MPa)'].max()
-    fracture_strain = df['Engineering Strain'].iloc[-1]
-    return {
-        "Material": material_name,
-        "Elastic Modulus": elastic_modulus,
-        "Yield Strength": yield_strength,
-        "UTS": uts,
-        "Fracture Strain": fracture_strain
-    }
+
+# Calculate Elastic Modulus (Young's Modulus) using the first two data points
+# Formula: E = stress / strain (only valid in the elastic region)
+elastic_modulus = df['Engineering Stress (MPa)'].iloc[1] / df['Engineering Strain'].iloc[1]
+
+# Estimate Yield Strength using 0.2% offset method (approximation)
+# Find the first stress value where strain exceeds 0.002 (0.02%)
+yield_strength = df[df['Engineering Strain'] > 0.002]['Engineering Stress (MPa)'].iloc[0]
+
+# Find the Ultimate Tensile Strength (UTS), which is the maximum stress value in the dataset
+uts = df['Engineering Stress (MPa)'].max()
+
+# Get the Fracture Strain, which is the last strain value recorded (where the material breaks)
+fracture_strain = df['Engineering Strain'].iloc[-1]
+
+# Return all calculated properties in a dictionary format, including the material name
+return {
+    "Material": material_name,
+    "Elastic Modulus": elastic_modulus,
+    "Yield Strength": yield_strength,
+    "UTS": uts,
+    "Fracture Strain": fracture_strain
+}
