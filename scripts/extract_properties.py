@@ -27,8 +27,7 @@ def extract_properties(df, material_name='Unknown'):
     Notes:
     ------
     This function assumes that the input data is sorted by increasing strain.
-    It uses simple methods for estimating properties and is ideal for simulation 
-    or educational purposes.
+    It uses simple methods for estimating properties and is ideal for simulation or educational purposes.
     
     ''' 
 
