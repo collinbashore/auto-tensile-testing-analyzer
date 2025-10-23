@@ -25,10 +25,10 @@ def get_material_properties(material, geometry_df, properties_df):
         Example keys might include:
             - 'A_0 (mm²)'
             - 'L_0 (mm)'
-            - 'Elastic Modulus'
-            - 'Yield Strength'
-            - 'Strength Coefficient'
-            - 'Strain Hardening Exponent'
+            - 'Elastic Modulus (MPa)'
+            - 'Yield Strength (MPa)'
+            - 'Strength Coefficient K (MPa)'
+            - 'n (Strain Hardening Exponent)'
 
     Raises:
     -------
