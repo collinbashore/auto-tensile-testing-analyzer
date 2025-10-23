@@ -27,11 +27,11 @@ def plot_engineering_true_combined_subplots(df, material_name='Material'):
     fig.suptitle(f"Stress-Strain Curves for {material_name}", fontsize=14)
 
     # Subplot 1: Engineering Stress-Strain curve
-    axs[0].plot(
+    axs[0].plot( # Plot on the first axis (axs[0])
         df['Engineering Strain'],
         df['Engineering Stress (MPa)'],
-        label='Engineering Curve',
-        color='tab:blue'
+        label='Engineering Curve', # legend label
+        color='tab:blue' # line color
     )
     axs[0].set_title('Engineering Stress-Strain') # subplot title
     axs[0].set_xlabel('Engineering Strain')       # x-axis label
@@ -72,7 +72,9 @@ def plot_engineering_true_combined_subplots(df, material_name='Material'):
     axs[2].legend()
 
     # Adjust layout to make room for titles and avoid overlaps
-    plt.tight_layout(rect=[0, 0.03, 1, 0.95]) #rect parameter leaves space for suptitle, where rect=[left, bottom, right, top]
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95]) 
+    
+    # rect parameter leaves space for suptitle, where rect=[left, bottom, right, top]
 
     # Display the plot window
     plt.show()
