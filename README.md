@@ -9,6 +9,7 @@
 ```kotlin
 tensile-analyzer/
 ├── main.py
+├── .gitignore
 ├── tensile_analyzer_notebook.ipynb
 ├── README.md
 ├── scripts/
@@ -17,7 +18,8 @@ tensile-analyzer/
 │   ├── calculate_stress_strain.py
 │   ├── extract_properties.py
 │   ├── visualize.py
-│   └── input_validation.py
+│   ├── input_validation.py
+│   └── user_inputs.py   
 └── Tensile_Analyzer_MasterWorkbook.xlsx (place this file manually)
 ```
 
