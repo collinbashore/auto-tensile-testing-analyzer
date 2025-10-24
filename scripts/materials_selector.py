@@ -41,10 +41,22 @@ def get_material_properties(material, geometry_df, properties_df):
     - Combines rows from both datasets into a single dictionary using unpacking (**).
     - Useful for simulations and calculations that require both geometry and mechanical inputs.
     """
+    # Convert material name to lowercase and find its matching row in the geometry DataFrame
     geo_row = geometry_df[geometry_df["Material"].str.lower() == material.lower()]
+    
+    # Do the same for the material properties DataFrame
     prop_row = properties_df[properties_df["Material"].str.lower() == material.lower()]
+    
+    # If either row is not found (i.e., material is missing), raise an error and stop the program
     if geo_row.empty or prop_row.empty:
         raise ValueError(f"Material '{material}' not found.")
+    
+    # Convert the single matching row for geometry into a dictionary (key-value format)
     geometry = geo_row.iloc[0].to_dict()
+    
+    # Do the same for the properties row
     properties = prop_row.iloc[0].to_dict()
+    
+    # Merge the two dictionaries (geometry + properties) and return the combined result
+    # This allows access to all material parameters (dimensions + properties) in one place
     return {**geometry, **properties}
