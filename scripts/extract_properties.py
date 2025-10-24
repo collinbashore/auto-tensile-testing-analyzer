@@ -64,7 +64,7 @@ def extract_properties(df, material_name='Unknown'):
     toughness *= 1e3  # Convert GPa to MPa (MJ/m^3)
 
     # Resilience = Area under elastic region (linear approx.)
-    resilience = 0.5 * elastic_modulus * (0.002**2)  # Assuming yield strain = 0.002
+    resilience = (yield_strength ** 2) / (2 * elastic_modulus)
 
     # True Stress at UTS = Use index of max engineering stress
     uts_index = df['Engineering Stress (GPa)'].idxmax()
@@ -75,7 +75,7 @@ def extract_properties(df, material_name='Unknown'):
     necking_strain = df['True Strain'].iloc[necking_index]
 
     # Percent Reduction in Area (%RA)
-    # ε_tf = ln(A0 / Af) => %RA ≈ (1 - exp(-ε_tf)) * 100
+    # ε_tf = ln(A0 / Af) => %RA = (1 - exp(-ε_tf)) * 100
     true_fracture_strain = df['True Strain'].iloc[-1]
     percent_reduction_area = (1 - np.exp(-true_fracture_strain)) * 100
     
