@@ -3,8 +3,11 @@
         "figsize",
         "fontsize",
         "gridlines",
+        "Hollomon's",
         "nrows",
         "suptitle",
+        "trapz",
+        "unitless",
         "usecols",
         "xlabel",
         "ylabel"
