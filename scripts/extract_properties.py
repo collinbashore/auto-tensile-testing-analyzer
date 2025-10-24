@@ -27,7 +27,7 @@ def extract_properties(df, material_name='Unknown'):
             - 'Yield Strength (MPa)': First stress value after strain > 0.002 (0.2% offset method)
             - 'Ultimate Tensile Strength (UTS, MPa)': Ultimate tensile strength (maximum stress)
             - 'Fracture Strain': Last strain value in the dataset (i.e., failure point)
-            - 'Toughness (MJ/m^3)': Area under the full engineering stress-strain curve (up to fracture)
+            - 'Toughness (MPa or MJ/m^3)': Area under the full engineering stress-strain curve (up to fracture)
             - 'Resilience (GPa)': Area under the stress-strain curve up to yield point
             - 'True Stress at UTS (MPa)': True stress corresponding to UTS
             - 'Necking strain': True strain at UTS
@@ -75,7 +75,7 @@ def extract_properties(df, material_name='Unknown'):
     necking_strain = df['True Strain'].iloc[necking_index]
 
     # Percent Reduction in Area (%RA)
-    # ε_true = ln(A0 / Af) => %RA ≈ (1 - exp(-ε_f)) * 100
+    # ε_tf = ln(A0 / Af) => %RA ≈ (1 - exp(-ε_tf)) * 100
     true_fracture_strain = df['True Strain'].iloc[-1]
     percent_reduction_area = (1 - np.exp(-true_fracture_strain)) * 100
     
