@@ -28,8 +28,8 @@ def extract_properties(df, material_name='Unknown'):
             - 'Ultimate Tensile Strength (UTS, MPa)': Ultimate tensile strength (maximum stress)
             - 'Fracture Strain': Last strain value in the dataset (i.e., failure point)
             - 'Toughness (MPa or MJ/m^3)': Area under the full engineering stress-strain curve (up to fracture)
-            - 'Resilience (GPa)': Area under the stress-strain curve up to yield point
-            - 'True Stress at UTS (MPa)': True stress corresponding to UTS
+            - 'Resilience (MPa or MJ/m^3)': Area under the stress-strain curve up to yield point
+            - 'True Stress at UTS (GPa)': True stress corresponding to UTS
             - 'Necking strain': True strain at UTS
             - 'Percent Reduction in Area': Calculated from true fracture strain (or from the initial and 
             final cross-sectional areas if available)
@@ -49,9 +49,11 @@ def extract_properties(df, material_name='Unknown'):
     # Estimate Yield Strength using 0.2% offset method (approximation)
     # Find the first stress value where strain exceeds 0.002 (0.2%)
     yield_strength = df[df['Engineering Strain'] > 0.002]['Engineering Stress (GPa)'].iloc[0]
+    yield_strength *= 1e3  # Convert GPa to MPa for yield strength
 
     # Find the Ultimate Tensile Strength (UTS), which is the maximum stress value in the dataset
     uts = df['Engineering Stress (GPa)'].max()
+    uts *= 1e3  # Convert GPa to MPa for UTS
 
     # Get the Fracture Strain, which is the last strain value recorded (where the material breaks)
     fracture_strain = df['Engineering Strain'].iloc[-1]
@@ -60,11 +62,12 @@ def extract_properties(df, material_name='Unknown'):
     percent_elongation = fracture_strain * 100  # Convert to percentage
     
     # Toughness = Area under full engineering stress-strain curve
+    # np.trapz does numerical integration using the trapezoidal rule
     toughness = np.trapz(df['Engineering Stress (GPa)'], df['Engineering Strain'])
     toughness *= 1e3  # Convert GPa to MPa (MJ/m^3)
 
     # Resilience = Area under elastic region (linear approx.)
-    resilience = (yield_strength ** 2) / (2 * elastic_modulus)
+    resilience = (yield_strength ** 2) / (2 * elastic_modulus * 1e3)  # Convert GPa to MPa for modulus
 
     # True Stress at UTS = Use index of max engineering stress
     uts_index = df['Engineering Stress (GPa)'].idxmax()
