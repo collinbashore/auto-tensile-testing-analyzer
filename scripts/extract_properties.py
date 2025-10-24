@@ -27,11 +27,12 @@ def extract_properties(df, material_name='Unknown'):
             - 'Yield Strength (MPa)': First stress value after strain > 0.002 (0.2% offset method)
             - 'Ultimate Tensile Strength (UTS, MPa)': Ultimate tensile strength (maximum stress)
             - 'Fracture Strain': Last strain value in the dataset (i.e., failure point)
+            - 'Percent Elongation (%)': Fracture strain expressed as a percentage
             - 'Toughness (MPa or MJ/m^3)': Area under the full engineering stress-strain curve (up to fracture)
             - 'Resilience (MPa or MJ/m^3)': Area under the stress-strain curve up to yield point
             - 'True Stress at UTS (GPa)': True stress corresponding to UTS
             - 'Necking strain': True strain at UTS
-            - 'Percent Reduction in Area': Calculated from true fracture strain (or from the initial and 
+            - 'Percent Reduction in Area (%)': Calculated from true fracture strain (or from the initial and 
             final cross-sectional areas if available)
     
     Notes:
@@ -94,5 +95,5 @@ def extract_properties(df, material_name='Unknown'):
         "Resilience (GPa)": resilience,
         "True Stress at UTS (MPa)": true_stress_at_uts,
         "Necking strain": necking_strain,
-        "Percent Reduction in Area": percent_reduction_area
+        "Percent Reduction in Area (%)": percent_reduction_area
     }
