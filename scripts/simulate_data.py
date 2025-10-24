@@ -46,7 +46,7 @@ def simulate_stress_strain(E, sigma_y, K, n, L_0, A_0, strain_max=0.3, num_point
     eng_strain = np.linspace(0, strain_max, num_points)  
     
     # Calculate yield strain (ε_y) from yield strength (σ_y) and elastic modulus (E)
-    yield_strain = sigma_y / E 
+    yield_strain = sigma_y / (E * 1e3)  # Convert E from GPa to MPa for consistency
     
     # Calculate values of stress (engineering) in the eng_stress array based on the values 
     # in the eng_strain array:
