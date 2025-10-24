@@ -15,9 +15,9 @@ def calculate_stress_strain(df, A_0, L_0):
     --------
     pd.DataFrame: Updated DataFrame with:
         - Engineering Strain (unitless)
-        - Engineering Stress (MPa)
+        - Engineering Stress (GPa)
         - True Strain (unitless)
-        - True Stress (MPa)
+        - True Stress (GPa)
     """
     df = df.copy() # To avoid modifying the original DataFrame
     
@@ -32,7 +32,7 @@ def calculate_stress_strain(df, A_0, L_0):
     df['True Stress (GPa)'] = df['Engineering Stress (GPa)'] * (1 + df['Engineering Strain'])
     
     # Return dataframe with relevant columns only
-    df = df[['Engineering Strain', 'Engineering Stress (MPa)', 
-            'True Strain', 'True Stress (MPa)']]
+    df = df[['Engineering Strain', 'Engineering Stress (GPa)', 
+            'True Strain', 'True Stress (GPa)']]
 
     return df
