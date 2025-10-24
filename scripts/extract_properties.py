@@ -8,7 +8,7 @@ def extract_properties(df, material_name='Unknown'):
         A DataFrame containing engineering stress-strain data.
         Must include the following columns:
             - 'Engineering Strain'
-            - 'Engineering Stress (MPa)'
+            - 'Engineering Stress (GPa)'
 
     material_name : str, optional
         Name of the material. Default is 'Unknown'.
