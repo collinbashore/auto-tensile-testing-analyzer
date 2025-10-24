@@ -9,6 +9,8 @@ def extract_properties(df, material_name='Unknown'):
         Must include the following columns:
             - 'Engineering Strain'
             - 'Engineering Stress (GPa)'
+            - 'True Strain'
+            - 'True Stress (GPa)'
 
     material_name : str, optional
         Name of the material. Default is 'Unknown'.
@@ -19,10 +21,15 @@ def extract_properties(df, material_name='Unknown'):
     pd.DataFrame
         A single-row DataFrame with the following columns:
             - 'Material': Name of the material
-            - 'Elastic Modulus': Approximated from first two points
-            - 'Yield Strength': First stress value after strain > 0.002 (0.2% offset method)
-            - 'UTS': Ultimate tensile strength (maximum stress)
+            - 'Elastic Modulus (GPa)': Approximated from first two points
+            - 'Yield Strength (MPa)': First stress value after strain > 0.002 (0.2% offset method)
+            - 'Ultimate Tensile Strength (UTS, MPa)': Ultimate tensile strength (maximum stress)
             - 'Fracture Strain': Last strain value in the dataset (i.e., failure point)
+            - 'Toughness (J/m^3)': Area under the full engineering stress-strain curve (up to fracture)
+            - 'Resilience': Area under the stress-strain curve up to yield point
+            - 'True Stress at UTS': True stress corresponding to UTS
+            - 'Necking strain': True strain at UTS
+            - 'Percent Reduction in Area': Calculated from initial and final cross-sectional areas
     
     Notes:
     ------
