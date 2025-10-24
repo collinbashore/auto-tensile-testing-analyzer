@@ -28,10 +28,10 @@ def get_user_inputs(file_path):
     dashboard = pd.read_excel(file_path, sheet_name="Dashboard", usecols="B", nrows=7)
 
     # Step 2: Extract individual values
-    material = dashboard.iloc[3, 0] # Material name from cell B4
-    override_A0 = dashboard.iloc[4, 0] # Override A0 from cell B5
-    override_L0 = dashboard.iloc[5, 0] # Override L0 from cell B6
-    use_simulation = dashboard.iloc[6, 0] # Use simulate data (TRUE) or real data (FALSE) from cell B7
+    material = dashboard.iloc[4, 0] # Material name from cell B5
+    override_A0 = dashboard.iloc[8, 0] # Override A0 from cell B9
+    override_L0 = dashboard.iloc[9, 0] # Override L0 from cell B10
+    use_simulation = dashboard.iloc[5, 0] # Use simulate data (TRUE) or real data (FALSE) from cell B9
 
     # Step 3: Begin validations
 
@@ -40,13 +40,11 @@ def get_user_inputs(file_path):
         raise ValueError("Material name is missing or invalid. Please select a material in cell B4.")
 
     # A0 and L0 are optional, but if they are provided, they must be positive numbers
-    if pd.notna(override_A0):
-        if not isinstance(override_A0, (int, float)) or override_A0 <= 0:
-            raise ValueError("Override A_0 must be a positive number.")
+    if pd.notna(override_A0) and (not isinstance(override_A0, (int, float)) or override_A0 <= 0):
+        raise ValueError("Override A_0 must be a positive number.")
 
-    if pd.notna(override_L0):
-        if not isinstance(override_L0, (int, float)) or override_L0 <= 0:
-            raise ValueError("Override L_0 must be a positive number.")
+    if pd.notna(override_L0) and (not isinstance(override_L0, (int, float)) or override_L0 <= 0):
+        raise ValueError("Override L_0 must be a positive number.")
 
     # use_simulation must be a boolean (TRUE or FALSE in Excel)
     if not isinstance(use_simulation, bool):
