@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 def calculate_stress_strain(df, A_0, L_0):
     """
@@ -21,14 +22,14 @@ def calculate_stress_strain(df, A_0, L_0):
     df = df.copy() # To avoid modifying the original DataFrame
     
     # Engineering stress and strain
-    df['Engineering Stress (MPa)'] = df['Force (N)'] / A_0
+    df['Engineering Stress (GPa)'] = (df['Force (N)'] / A_0) / 1e-3  # Convert to GPa, where 1 N/mm² = 1 MPa = 1e-3 GPa
     df['Engineering Strain'] = df['Elongation (mm)'] / L_0
 
     # True stress and strain
     df['True Strain'] = np.log(1 + df['Engineering Strain']) 
     # np.log is the natural logarithm function
     
-    df['True Stress (MPa)'] = df['Engineering Stress (MPa)'] * (1 + df['Engineering Strain'])
+    df['True Stress (GPa)'] = df['Engineering Stress (GPa)'] * (1 + df['Engineering Strain'])
     
     # Return dataframe with relevant columns only
     df = df[['Engineering Strain', 'Engineering Stress (MPa)', 
