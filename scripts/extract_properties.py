@@ -1,3 +1,5 @@
+import numpy as np
+
 def extract_properties(df, material_name='Unknown'):
     ''' 
     This function extracts key mechanical properties from the stress-strain DataFrame.
@@ -25,11 +27,12 @@ def extract_properties(df, material_name='Unknown'):
             - 'Yield Strength (MPa)': First stress value after strain > 0.002 (0.2% offset method)
             - 'Ultimate Tensile Strength (UTS, MPa)': Ultimate tensile strength (maximum stress)
             - 'Fracture Strain': Last strain value in the dataset (i.e., failure point)
-            - 'Toughness (J/m^3)': Area under the full engineering stress-strain curve (up to fracture)
-            - 'Resilience': Area under the stress-strain curve up to yield point
-            - 'True Stress at UTS': True stress corresponding to UTS
+            - 'Toughness (MJ/m^3)': Area under the full engineering stress-strain curve (up to fracture)
+            - 'Resilience (GPa)': Area under the stress-strain curve up to yield point
+            - 'True Stress at UTS (MPa)': True stress corresponding to UTS
             - 'Necking strain': True strain at UTS
-            - 'Percent Reduction in Area': Calculated from initial and final cross-sectional areas
+            - 'Percent Reduction in Area': Calculated from true fracture strain (or from the initial and 
+            final cross-sectional areas if available)
     
     Notes:
     ------
@@ -52,12 +55,41 @@ def extract_properties(df, material_name='Unknown'):
 
     # Get the Fracture Strain, which is the last strain value recorded (where the material breaks)
     fracture_strain = df['Engineering Strain'].iloc[-1]
+    
+    # Calculate percent elongation at fracture
+    percent_elongation = fracture_strain * 100  # Convert to percentage
+    
+    # Toughness = Area under full engineering stress-strain curve
+    toughness = np.trapz(df['Engineering Stress (GPa)'], df['Engineering Strain'])
+    toughness *= 1e3  # Convert GPa to MPa (MJ/m^3)
 
+    # Resilience = Area under elastic region (linear approx.)
+    resilience = 0.5 * elastic_modulus * (0.002**2)  # Assuming yield strain = 0.002
+
+    # True Stress at UTS = Use index of max engineering stress
+    uts_index = df['Engineering Stress (GPa)'].idxmax()
+    true_stress_at_uts = df['True Stress (GPa)'].iloc[uts_index]
+
+    # Necking strain = True strain at max true stress (usually post-UTS)
+    necking_index = df['True Stress (GPa)'].idxmax()
+    necking_strain = df['True Strain'].iloc[necking_index]
+
+    # Percent Reduction in Area (%RA)
+    # ε_true = ln(A0 / Af) => %RA ≈ (1 - exp(-ε_f)) * 100
+    true_fracture_strain = df['True Strain'].iloc[-1]
+    percent_reduction_area = (1 - np.exp(-true_fracture_strain)) * 100
+    
     # Return all calculated properties in a dictionary format, including the material name
     return {
         "Material": material_name,
         "Elastic Modulus (GPa)": elastic_modulus,
         "Yield Strength (MPa)": yield_strength,
         "Ultimate Tensile Strength (UTS, MPa)": uts,
-        "Fracture Strain": fracture_strain
+        "Fracture Strain": fracture_strain,
+        "Percent Elongation (%)": percent_elongation,
+        "Toughness (MJ/m^3)": toughness,
+        "Resilience (GPa)": resilience,
+        "True Stress at UTS (MPa)": true_stress_at_uts,
+        "Necking strain": necking_strain,
+        "Percent Reduction in Area": percent_reduction_area
     }
