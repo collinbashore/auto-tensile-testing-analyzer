@@ -91,9 +91,9 @@ def extract_properties(df, material_name='Unknown'):
         "Ultimate Tensile Strength (UTS, MPa)": uts,
         "Fracture Strain": fracture_strain,
         "Percent Elongation (%)": percent_elongation,
-        "Toughness (MJ/m^3)": toughness,
-        "Resilience (GPa)": resilience,
-        "True Stress at UTS (MPa)": true_stress_at_uts,
+        "Toughness (MPa)": toughness,
+        "Resilience (MPa)": resilience,
+        "True Stress at UTS (GPa)": true_stress_at_uts,
         "Necking strain": necking_strain,
         "Percent Reduction in Area (%)": percent_reduction_area
     }
