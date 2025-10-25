@@ -1,3 +1,5 @@
+# Stress–strain visualization: plots engineering, true, and combined curves, with optional annotations.
+
 import matplotlib.pyplot as plt
 from scripts.extract_properties import extract_properties
 
@@ -29,7 +31,7 @@ def plot_engineering_true_combined_subplots(df, material_name='Material', props=
         The figure object containing the subplots.
     """
 
-    # Create 3 horizontal subplots (1 row x 3 columns), with a wide figure size (in inches)
+    # Figure: 1×3 subplots (wide layout)
     fig, axs = plt.subplots(1, 3, figsize=(18, 5))
 
     # Add a main title for the entire figure
@@ -251,14 +253,13 @@ def plot_engineering_true_combined_subplots(df, material_name='Material', props=
     axs[1].legend(loc='upper left', framealpha=0.9, edgecolor='black', fontsize=9)
     axs[2].legend(loc='upper left', framealpha=0.9, edgecolor='black', fontsize=9)
 
-    # Adjust layout to make room for titles and avoid overlaps
-    plt.tight_layout(rect=[0, 0.03, 1, 0.95]) 
+    # Tight layout to neatly arrange subplots and avoid overlap (reserve space for title)
+    # Reserve 3% bottom and 5% top margins for labels/title
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     
-    # rect parameter leaves space for suptitle, where rect=[left, bottom, right, top]
-
-    # Display the plot window
+    # Show plots
     plt.show()
     
-    # Return the figure object for further manipulation if needed
+    # Return figure for saving or further use
     return fig
     
