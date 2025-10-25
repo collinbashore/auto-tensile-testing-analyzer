@@ -24,16 +24,28 @@ def get_user_inputs(file_path):
         If required values are missing or of the wrong type.
     """
 
-    # Step 1: Read the first 6 rows of only column B from the Dashboard sheet
+    ## Step 1: Read the first 6 rows of only column B from the Dashboard sheet
     dashboard = pd.read_excel(file_path, sheet_name="Dashboard", usecols="C", nrows=12)
 
-    # Step 2: Extract individual values
+    ## Step 2: Extract individual values
     material = dashboard.iloc[4, 0] # Material name from cell C5
     override_A0 = dashboard.iloc[8, 0] # Override A0 from cell C9
     override_L0 = dashboard.iloc[9, 0] # Override L0 from cell C10
     use_simulation = dashboard.iloc[5, 0] # Use simulate data (TRUE) or real data (FALSE) from cell C6
 
-    # Step 3: Begin validations
+    ## Step 3: Load Geometry_Lookup sheet to find default values
+    geometry_df = pd.read_excel(file_path, sheet_name="Geometry_Lookup")
+    material_row = geometry_df[geometry_df["Material"].str.lower() == str(material).lower()]
+    
+    ## Step 4: Get default values if overrides are not provided
+    default_A0 = material_row["A_0 (mm²)"].values[0]
+    default_L0 = material_row["L_0 (mm)"].values[0]
+
+    ## Step 5: Begin validations
+
+    # Check if material exists in Geometry_Lookup sheet
+    if material_row.empty:
+        raise ValueError(f"Material '{material}' not found in Geometry_Lookup sheet.")
 
     # Material name must not be empty or NaN
     if pd.isna(material) or not isinstance(material, str) or material.strip() == "":
@@ -49,5 +61,10 @@ def get_user_inputs(file_path):
     # use_simulation must be a boolean (TRUE or FALSE in Excel)
     if not isinstance(use_simulation, bool):
         raise ValueError("Use Simulation must be either TRUE or FALSE in cell C6.")
+    
+    ## Step 6: Validate overrides
+    from scripts.input_validation import validate_override
+    A_0 = validate_override(override_A0, default_A0, "Cross-sectional area (A_0)")
+    L_0 = validate_override(override_L0, default_L0, "Gauge length (L_0)")
 
-    return material, override_A0, override_L0, use_simulation
+    return material, A_0, L_0, use_simulation
