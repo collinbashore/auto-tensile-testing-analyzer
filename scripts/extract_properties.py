@@ -72,11 +72,11 @@ def extract_properties(df, material_name='Unknown'):
 
     # True Stress at UTS = Use index of max engineering stress
     uts_index = df['Engineering Stress (GPa)'].idxmax()
-    true_stress_at_uts = df['True Stress (GPa)'].iloc[uts_index]
+    true_stress_at_uts = df.loc[uts_index, 'True Stress (GPa)']
 
     # Necking strain = True strain at max true stress (usually post-UTS)
     necking_index = df['True Stress (GPa)'].idxmax()
-    necking_strain = df['True Strain'].iloc[necking_index]
+    necking_strain = df.loc[necking_index, 'True Strain']
 
     # Percent Reduction in Area (%RA)
     # ε_tf = ln(A0 / Af) => %RA = (1 - exp(-ε_tf)) * 100
@@ -84,7 +84,7 @@ def extract_properties(df, material_name='Unknown'):
     percent_reduction_area = (1 - np.exp(-true_fracture_strain)) * 100
     
     # Return all calculated properties in a dictionary format, including the material name
-    return {
+    props = {
         "Material": material_name,
         "Elastic Modulus (GPa)": elastic_modulus,
         "Yield Strength (MPa)": yield_strength,
@@ -97,3 +97,4 @@ def extract_properties(df, material_name='Unknown'):
         "Necking Strain": necking_strain,
         "Percent Reduction in Area (%)": percent_reduction_area
     }
+    return props
