@@ -1,3 +1,5 @@
+import pandas as pd
+
 def validate_inputs(A_0, L_0, df):
     """
     This function validates the inputs required for stress-strain calculations.
@@ -42,3 +44,42 @@ def validate_inputs(A_0, L_0, df):
     if 'Force (N)' not in df.columns or 'Elongation (mm)' not in df.columns:
         raise ValueError("Missing required columns in data.")
     return True
+
+def validate_override(value, default, name):
+    """
+    Validates an override value for A_0 or L_0.
+
+    Parameters:
+    -----------
+    value : any
+        The override value to validate. Can be None if no override is provided.
+
+    default : float
+        The default value to use if no override is provided.
+
+    name : str
+        The name of the parameter being validated (for logging/debugging purposes).
+
+    Raises:
+    -------
+    ValueError:
+        - If the override value is provided but is not a positive number.
+    
+    Returns:
+    --------
+    float
+        The validated override value (or default if None is provided).
+    """
+    try:
+        # If cell is blank (NaN, None, or empty string), use default value
+        if pd.isna(value) or value == "":
+            print(f"{name} override not provided. Using default: {default}")
+            return default
+
+        # Convert to float if valid
+        return float(value)
+    
+    except ValueError:
+        # If conversion fails or value is invalid, raise error
+        print(f"Invalid {name} override value provided: {value}. Using default: {default}")
+        return default
