@@ -9,7 +9,9 @@
 ```kotlin
 tensile-analyzer/
 ├── main.py
+├── main_excel_addin.py
 ├── .gitignore
+├── .vscode
 ├── tensile_analyzer_notebook.ipynb
 ├── README.md
 ├── scripts/
