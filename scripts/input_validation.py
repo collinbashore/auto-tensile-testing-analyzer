@@ -37,12 +37,19 @@ def validate_inputs(A_0, L_0, df):
     mechanical property calculations. Prevents runtime errors
     and ensures data quality and integrity.
     """
+    # Check that required scalar inputs are positive
     if A_0 <= 0 or L_0 <= 0:
         raise ValueError("Cross-sectional area and gauge length must be greater than zero.")
+
+    # Fail if any cell in the DataFrame is missing
     if df.isnull().values.any():
         raise ValueError("Data contains null values.")
+
+    # Verify required columns exist in the DataFrame
     if 'Force (N)' not in df.columns or 'Elongation (mm)' not in df.columns:
         raise ValueError("Missing required columns in data.")
+
+    # All validations passed
     return True
 
 def validate_override(value, default, name):
