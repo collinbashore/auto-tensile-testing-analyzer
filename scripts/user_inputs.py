@@ -14,8 +14,8 @@ def get_user_inputs(file_path):
     tuple
         A tuple containing:
         - material (str)
-        - override_A0 (float or None)
-        - override_L0 (float or None)
+        - A_0 (float or None)
+        - L_0 (float or None)
         - use_simulation (bool)
 
     Raises:
