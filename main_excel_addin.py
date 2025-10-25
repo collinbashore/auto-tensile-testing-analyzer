@@ -1,7 +1,7 @@
 
 from scripts.user_inputs import get_user_inputs
 from scripts.input_validation import validate_inputs
-from scripts.material_selector import get_material_properties
+from scripts.materials_selector import get_material_properties
 from scripts.simulate_data import simulate_stress_strain
 from scripts.calculate_stress_strain import calculate_stress_strain
 from scripts.extract_properties import extract_properties
