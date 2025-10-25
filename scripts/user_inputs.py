@@ -35,7 +35,7 @@ def get_user_inputs(file_path):
 
     ## Step 3: Load Geometry_Lookup sheet to find default values
     geometry_df = pd.read_excel(file_path, sheet_name="Geometry_Lookup")
-    material_row = geometry_df[geometry_df["Material"].str.lower() == str(material).lower()]
+    material_row = geometry_df[geometry_df["Material"].str.lower() == str(material).lower()] 
     
     ## Step 4: Get default values if overrides are not provided
     default_A0 = material_row["A_0 (mm²)"].values[0]
