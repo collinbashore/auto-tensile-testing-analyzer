@@ -1,9 +1,8 @@
 # Import all necessary Python libraries and objects
-import pandas as pd # For data manipulation
-import matplotlib.pyplot as plt # For data visualization
-from pathlib import Path # For handling file paths
-from openpyxl import load_workbook # For Excel file operations
-from openpyxl.drawing.image import Image # For handling images in Excel
+import pandas as pd  # For data manipulation
+from pathlib import Path  # For handling file paths
+from openpyxl import load_workbook  # For Excel file operations
+from openpyxl.drawing.image import Image  # For handling images in Excel
 
 # Import all modules from the 'scripts' file directory
 from scripts.materials_selector import get_material_properties
@@ -18,13 +17,17 @@ from scripts.visualize import plot_engineering_true_combined_subplots
 file_path = Path("Tensile_Analyzer_MasterWorkbook.xlsx")
 
 # Step 2: Get user inputs from Dashboard sheet
-material_name, override_A0, override_L0, use_simulation = get_user_inputs(file_path)
+material_name, override_A0, override_L0, use_simulation = (
+    get_user_inputs(file_path)
+)
 
 # Step 3: Get material properties and validate geometry
 geometry_df = pd.read_excel(file_path, sheet_name="Geometry_Lookup")
 properties_df = pd.read_excel(file_path, sheet_name="Material_Properties")
 
-material_props = get_material_properties(material_name, geometry_df, properties_df)
+material_props = get_material_properties(
+    material_name, geometry_df, properties_df
+)
 
 # Override A_0 and L_0 from Dashboard if given
 # prefer dashboard overrides; fall back to material properties
@@ -56,7 +59,9 @@ else:
 
 # Step 5: Extract properties
 summary = extract_properties(df, material_props)
-with pd.ExcelWriter(file_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+with pd.ExcelWriter(
+        file_path, engine='openpyxl', mode='a',
+        if_sheet_exists='replace') as writer:
     df.to_excel(writer, sheet_name=output_sheet_name, index=False)
     summary_df = pd.DataFrame([summary])
     summary_df.to_excel(writer, sheet_name="Extracted_Properties", index=False)
@@ -68,7 +73,7 @@ fig = plot_engineering_true_combined_subplots(df, material_name)
 
 # Save the figure to a image file
 plot_path = Path("stress_strain_plots.png")
-fig.savefig(plot_path, dpi=300) # dpi=300 for high resolution
+fig.savefig(plot_path, dpi=300)  # dpi=300 for high resolution
 
 # Load the Excel workbook and select the 'Dashboard' sheet
 workbook_path = Path("Tensile_Analyzer_MasterWorkbook.xlsx")
