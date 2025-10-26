@@ -1,4 +1,4 @@
-# Project: Automated Tensile Test Analyzer
+﻿# Project: Automated Tensile Test Analyzer
 
 ## Summary & Overview
 
@@ -48,7 +48,7 @@ This project must deliver an automated, modular, and auditable pipeline that red
 
 Top-level files provide CLI entry points, project metadata, and a notebook example, while the scripts/ directory contains modular processing steps (simulation, validation, stress–strain calculation, property extraction, and visualization). A placeholder Excel workbook in the root supports lab integration and batch workflows.
 
-```
+```text
 tensile-analyzer/
 ├── main.py
 ├── main_excel_addin.py
