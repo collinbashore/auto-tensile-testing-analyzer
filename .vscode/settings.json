@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "addin",
+        "AISI",
         "arrowprops",
         "arrowstyle",
         "axhline",
@@ -18,7 +19,11 @@
         "ipynb",
         "lightyellow",
         "linestyle",
+        "matplotlib",
         "nrows",
+        "numpy",
+        "openpyxl",
+        "setuptools",
         "sourcery",
         "suptitle",
         "trapz",
