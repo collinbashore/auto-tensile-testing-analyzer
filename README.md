@@ -16,7 +16,7 @@ What it does:
 
 This project automates the end-to-end processing of tensile test data to produce reliable material properties, visualizations, and exportable reports while providing a reproducible, modular toolkit and an Excel integration for non-programmer workflows.
 
-Main goals and objectives
+Main goals and objectives:
 
 - Automate data ingestion, validation, and preprocessing for common tensile-test formats (CSV, TXT, Excel).
 - Compute engineering and true stress–strain curves and extract key properties (Young's modulus, yield strength using configurable methods, ultimate tensile strength, elongation, toughness, reduction of area).
@@ -30,7 +30,7 @@ Main goals and objectives
 
 ## Problem Statement
 
-Tensile testing generates critical material property data, but current lab workflows are fragmented, manual, and error-prone. Raw outputs come in diverse vendor formats (CSV, TXT, Excel) with inconsistent metadata, noisy measurements, and occasional missing segments. Manually cleaning, aligning, and analyzing each test is time-consuming and non-reproducible, leading to variability in reported properties (Young’s modulus, yield strength, UTS, elongation, toughness) between operators and labs.
+Tensile testing generates critical material property data, but current lab workflows are fragmented, manual, and error-prone. Raw outputs come in diverse vendor formats (CSV, TXT, Excel) with inconsistent metadata, noisy measurements, and occasional missing segments. Manually cleaning, aligning, and analyzing each test is time-consuming and non-reproducible, leading to variability in reported properties (Young's modulus, yield strength, UTS, elongation, toughness) between operators and labs.
 
 Key problems to solve:
 
@@ -48,7 +48,7 @@ This project must deliver an automated, modular, and auditable pipeline that red
 
 Top-level files provide CLI entry points, project metadata, and a notebook example, while the scripts/ directory contains modular processing steps (simulation, validation, stress–strain calculation, property extraction, and visualization). A placeholder Excel workbook in the root supports lab integration and batch workflows.
 
-```kotlin
+```
 tensile-analyzer/
 ├── main.py
 ├── main_excel_addin.py
@@ -63,46 +63,46 @@ tensile-analyzer/
 │   ├── extract_properties.py
 │   ├── visualize.py
 │   ├── input_validation.py
-│   └── user_inputs.py   
+│   └── user_inputs.py
 └── Tensile_Analyzer_MasterWorkbook.xlsx (place this file manually)
 ```
 
 ## Highlights (at a glance)
 
-Inputs:
+**Inputs:**
 
 - Excel workbook sheets: Instructions, Dashboard, Geometry_Lookup, Material_Properties, Input_Data, Stress_Strain+_Calculations, Simulated_Data, Properties_Extracted
 - Geometry overrides: A_0 (mm²), L_0 (mm) — optional (defaults come from Geometry_Lookup)
 
-Outputs:
+**Outputs:**
 
 - Clean stress–strain tables (engineering + true)
 - Extracted material properties table
 - Publication-quality PNG plots; optional embedding back into Excel
 
-Stack:
+**Stack:**
 
 - Python 3, pandas, NumPy, matplotlib, openpyxl; VS Code + Notebook friendly
 
-Units:
+**Units:**
 
 - Inputs: Force (N), Elongation (mm), A_0 (mm²), L_0 (mm)
 - Outputs: Stress (MPa/GPa as labeled), Strain (dimensionless or % as labeled)
 
 ## Quickstart
 
-1) Excel workflow (no coding):
+**1) Excel workflow (no coding):**
 
 - Open the Master workbook; on Dashboard select material and (optionally) override A_0/L_0.
 - Paste your test data into Input_Data (Force (N), Elongation (mm)).
 - Run the add-in script to compute curves, properties, and plots; results are written back to sheets and images saved.
 
-2) Python workflow (CLI/Notebook):
+**2) Python workflow (CLI/Notebook):**
 
 - Run main.py to process an input file or use the notebook to step through simulation → compute → extract → visualize.
 - Outputs will include stress–strain tables, a properties summary, and annotated plots.
 
-Tip: Use the simulation module to sanity-check methods or create demo plots when lab data isn’t available.
+**Tip:** Use the simulation module to sanity-check methods or create demo plots when lab data isn't available.
 
 ## Dataset(s)
 
@@ -113,23 +113,22 @@ Tip: Use the simulation module to sanity-check methods or create demo plots when
 
 ## Tools, Software, and Python Libraries
 
-- IDE / Editors
-
+- **IDE / Editors**
   - Visual Studio Code (custom notebook support)
   - Jupyter / JupyterLab (for notebooks and examples)
-- Version control / CI / packaging
 
+- **Version control / CI / packaging**
   - Git, GitHub (repo + issue tracking)
   - GitHub Actions (CI)
   - setuptools / pip (packaging & distribution)
   - Docker (optional reproducible environments)
-- Core Python libraries (data handling & numerics)
 
+- **Core Python libraries (data handling & numerics)**
   - numpy
   - pandas
   - matplotlib
-- Excel & reporting integration
 
+- **Excel & reporting integration**
   - Python add-on inside Excel
   - openpyxl (read/write .xlsx)
 
