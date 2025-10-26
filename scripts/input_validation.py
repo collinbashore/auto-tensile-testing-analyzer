@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def validate_inputs(A_0, L_0, df):
     """
     This function validates the inputs required for stress-strain calculations.
@@ -39,7 +40,10 @@ def validate_inputs(A_0, L_0, df):
     """
     # Check that required scalar inputs are positive
     if A_0 <= 0 or L_0 <= 0:
-        raise ValueError("Cross-sectional area and gauge length must be greater than zero.")
+        raise ValueError(
+            "Cross-sectional area and gauge length must be greater "
+            "than zero."
+        )
 
     # Fail if any cell in the DataFrame is missing
     if df.isnull().values.any():
@@ -51,6 +55,7 @@ def validate_inputs(A_0, L_0, df):
 
     # All validations passed
     return True
+
 
 def validate_override(value, default, name):
     """
@@ -65,13 +70,14 @@ def validate_override(value, default, name):
         The default value to use if no override is provided.
 
     name : str
-        The name of the parameter being validated (for logging/debugging purposes).
+        The name of the parameter being validated (for logging/debugging
+        purposes).
 
     Raises:
     -------
     ValueError:
         - If the override value is provided but is not a positive number.
-    
+
     Returns:
     --------
     float
@@ -85,8 +91,9 @@ def validate_override(value, default, name):
 
         # Convert to float if valid
         return float(value)
-    
+
     except ValueError:
         # If conversion fails or value is invalid, raise error
-        print(f"Invalid {name} override value provided: {value}. Using default: {default}")
-        return default
+        print(f"Invalid {name} override value provided: {value}. "
+              f"Using default: {default}")
+    return default
