@@ -11,6 +11,7 @@ from openpyxl.drawing.image import Image
 import pandas as pd
 from pathlib import Path
 
+
 def run_main():
     # Define file path
     workbook_path = Path("Tensile_Analyzer_MasterWorkbook.xlsx")
@@ -22,10 +23,18 @@ def run_main():
     validate_inputs(material, A_0, L_0, use_simulation)
 
     # Step 3: Get material properties and geometry
-    geometry_df = pd.read_excel(workbook_path, sheet_name="Geometry_Lookup")
-    properties_df = pd.read_excel(workbook_path, sheet_name="Material_Properties")
-    material_props = get_material_properties(material, geometry_df, properties_df)
-    
+    geometry_df = pd.read_excel(
+        workbook_path,
+        sheet_name="Geometry_Lookup"
+    )
+    properties_df = pd.read_excel(
+        workbook_path,
+        sheet_name="Material_Properties"
+    )
+    material_props = get_material_properties(
+        material, geometry_df, properties_df
+    )
+
     # Step 4: Update A_0 and L_0 with user overrides if provided
     A0_final = A_0 if A_0 is not None else material_props['A_0 (mm²)']
     L0_final = L_0 if L_0 is not None else material_props['L_0 (mm)']
@@ -33,24 +42,32 @@ def run_main():
     material_props['L_0 (mm)'] = L0_final
 
     # Step 4: Simulate or Calculate data
-    if use_simulation == bool("TRUE"): # If the user clicked the checkbox to use simulated data
-        df = simulate_stress_strain(E=material_props['Elastic Modulus (GPa)'],
-                                    sigma_y=material_props['Yield Strength (MPa)'],
-                                    K=material_props['Strength Coefficient K (MPa)'],
-                                    n=material_props['n (Strain Hardening Exponent)'],
-                                    A_0=A0_final,
-                                    L_0=L0_final)
-        df.to_excel(workbook_path, sheet_name="Simulated_Data", index=False)
+    # If the user clicked the checkbox to use simulated data
+    if use_simulation == bool("TRUE"):
+        df = simulate_stress_strain(
+            E=material_props['Elastic Modulus (GPa)'],
+            sigma_y=material_props['Yield Strength (MPa)'],
+            K=material_props['Strength Coefficient K (MPa)'],
+            n=material_props['n (Strain Hardening Exponent)'],
+            A_0=A0_final,
+            L_0=L0_final
+        )
+        df.to_excel(workbook_path, sheet_name="Simulated_Data",
+                    index=False)
     else:
         input_df = pd.read_excel(workbook_path, sheet_name="Input_Data")
         validate_inputs(A0_final, L0_final, input_df)
         df = calculate_stress_strain(input_df, A_0=A0_final, L_0=L0_final)
-        df.to_excel(workbook_path, sheet_name="Stress_Strain_Calculations", index=False)
+        df.to_excel(workbook_path,
+                    sheet_name="Stress_Strain_Calculations",
+                    index=False)
 
     # Step 5: Extract mechanical properties
     properties = extract_properties(df)
     properties_df = pd.DataFrame([properties])
-    properties_df.to_excel(workbook_path, sheet_name="Properties_Extracted", index=False)
+    properties_df.to_excel(workbook_path,
+                           sheet_name="Properties_Extracted",
+                           index=False)
 
     # Step 6: Generate plot
     fig = plot_engineering_true_combined_subplots(df, material)
