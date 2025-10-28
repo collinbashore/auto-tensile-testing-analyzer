@@ -52,7 +52,7 @@ if use_simulation:
         n=material_props["n (Strain Hardening Exponent)"],
         L_0=L_0,
         A_0=A_0,
-        strain_max=strain_max,
+        strain_max=material_props["Elongation at Break (Fracture Point)"],
     )
     output_sheet_name = "Simulated_Data"
 else:
