@@ -250,16 +250,17 @@ def plot_engineering_true_combined_subplots(
 
         # Mark the TRUE STRESS AT UTS (maximum true stress)
         # ------------------------------------------------------------
-        axs[1].axhline(props['True Stress at UTS (MPa)'],
+        true_stress_uts_gpa = props['True Stress at UTS (GPa)']
+        true_stress_uts_mpa = true_stress_uts_gpa * 1000  # Convert GPa to MPa
+        axs[1].axhline(true_stress_uts_mpa,
                        color='orange', linestyle='--', linewidth=1.5,
                        alpha=0.7)
         axs[1].annotate(
             f"True Stress at UTS\n"
-            f"{props['True Stress at UTS (MPa)']:.1f} MPa",
-            xy=(true_x_max * 0.05, props['True Stress at UTS (MPa)']),
+            f"{true_stress_uts_mpa:.1f} MPa",
+            xy=(true_x_max * 0.05, true_stress_uts_mpa),
             xytext=(true_x_max * 0.2,
-                    props['True Stress at UTS (MPa)']
-                    + true_y_offset * 2),
+                    true_stress_uts_mpa + true_y_offset * 2),
             arrowprops=dict(arrowstyle='->', color='orange', lw=1.2),
             color='orange', **text_style
         )
