@@ -71,8 +71,7 @@ def run_main():
                     index=False)
 
     # Step 5: Extract mechanical properties
-    properties = extract_properties(df)
-    properties_df = pd.DataFrame([properties])
+    properties_df = extract_properties(df)  # Now returns DataFrame directly
     properties_df.to_excel(workbook_path,
                            sheet_name="Properties_Extracted",
                            index=False)
@@ -92,4 +91,4 @@ def run_main():
     ws.add_image(img, "B13")
     wb.save(workbook_path)
 
-    return df, properties, fig
+    return df, properties_df, fig
