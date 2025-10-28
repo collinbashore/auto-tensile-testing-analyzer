@@ -63,7 +63,7 @@ with pd.ExcelWriter(
         file_path, engine='openpyxl', mode='a',
         if_sheet_exists='replace') as writer:
     df.to_excel(writer, sheet_name=output_sheet_name, index=False)
-    summary_df.to_excel(writer, sheet_name="Extracted_Properties", index=False)
+    summary_df.to_excel(writer, sheet_name="Properties_Extracted", index=False)
 
 # Step 6: Generate visualizations
 
