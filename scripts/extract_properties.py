@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 def extract_properties(df, material_name='Unknown'):
     ''' 
@@ -34,13 +35,13 @@ def extract_properties(df, material_name='Unknown'):
             - 'Necking strain': True strain at UTS
             - 'Percent Reduction in Area (%)': Calculated from true fracture strain (or from the initial and 
             final cross-sectional areas if available)
-    
+
     Notes:
     ------
     This function assumes that the input data is sorted by increasing strain.
     It uses simple methods for estimating properties and is ideal for simulation or educational purposes.
-    
-    ''' 
+
+    '''
 
     # Calculate Elastic Modulus (Young's Modulus) using the first two data points (the first data point is 
     # the origin of the plot (skipped in calculation), only the second data point ()index 1, not 0) is needed)
@@ -58,10 +59,10 @@ def extract_properties(df, material_name='Unknown'):
 
     # Get the Fracture Strain, which is the last strain value recorded (where the material breaks)
     fracture_strain = df['Engineering Strain'].iloc[-1]
-    
+
     # Calculate percent elongation at fracture
     percent_elongation = fracture_strain * 100  # Convert to percentage
-    
+
     # Toughness = Area under full engineering stress-strain curve
     # np.trapz does numerical integration using the trapezoidal rule
     toughness = np.trapz(df['Engineering Stress (GPa)'], df['Engineering Strain'])
@@ -82,8 +83,8 @@ def extract_properties(df, material_name='Unknown'):
     # ε_tf = ln(A0 / Af) => %RA = (1 - exp(-ε_tf)) * 100
     true_fracture_strain = df['True Strain'].iloc[-1]
     percent_reduction_area = (1 - np.exp(-true_fracture_strain)) * 100
-    
-    # Return all calculated properties in a dictionary format, including the material name
+
+    # Return all calculated properties as a single-row DataFrame, including the material name
     props = {
         "Material": material_name,
         "Elastic Modulus (GPa)": elastic_modulus,
@@ -97,4 +98,6 @@ def extract_properties(df, material_name='Unknown'):
         "Necking Strain": necking_strain,
         "Percent Reduction in Area (%)": percent_reduction_area
     }
-    return props
+
+    # Convert dictionary to DataFrame for easier Excel handling
+    return pd.DataFrame([props])
