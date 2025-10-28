@@ -29,7 +29,7 @@ def get_user_inputs(file_path):
     # Step 1: Read the first 6 rows of only column B from the Dashboard
     # sheet
     dashboard = pd.read_excel(file_path, sheet_name="Dashboard",
-                              usecols="C", nrows=12)
+                              usecols="C", nrows=10)
 
     # Step 2: Extract individual values
     material = dashboard.iloc[4, 0]  # Material name from cell C5
