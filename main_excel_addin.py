@@ -25,7 +25,7 @@ def run_main():
     workbook_path = Path("Tensile_Analyzer_MasterWorkbook.xlsx")
 
     # Step 1: Get user inputs from Dashboard sheet
-    material, A_0, L_0, use_simulation = get_user_inputs(workbook_path)
+    material, A_0, L_0, use_simulation, strain_max = get_user_inputs(workbook_path)
 
     # Step 2: Validate inputs
     validate_inputs(material, A_0, L_0, use_simulation)
@@ -58,7 +58,8 @@ def run_main():
             K=material_props['Strength Coefficient K (MPa)'],
             n=material_props['n (Strain Hardening Exponent)'],
             A_0=A0_final,
-            L_0=L0_final
+            L_0=L0_final,
+            strain_max=strain_max
         )
         df.to_excel(workbook_path, sheet_name="Simulated_Data",
                     index=False)
