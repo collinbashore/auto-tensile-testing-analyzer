@@ -2,7 +2,7 @@
 
 
 def run_main():
-    '''Main function to run the tensile analyzer Excel add-in workflow.
+    '''Main function to run the tensile test analyzer Excel add-in workflow.
 
     Returns:
         df (pd.DataFrame): DataFrame containing stress-strain data.
