@@ -19,6 +19,7 @@ def get_user_inputs(file_path):
         - A_0 (float or None)
         - L_0 (float or None)
         - use_simulation (bool)
+        - strain_max (float)
 
     Raises:
     -------
@@ -43,7 +44,10 @@ def get_user_inputs(file_path):
 
     # Override values are optional - only read if they exist
     override_A0 = dashboard.iloc[7, 0] if len(dashboard) > 7 else None  # Adjusted index
-    override_L0 = dashboard.iloc[8, 0] if len(dashboard) > 8 else None  # Adjusted index    # Step 3: Load Geometry_Lookup sheet to find default values
+    override_L0 = dashboard.iloc[8, 0] if len(dashboard) > 8 else None  # Adjusted index
+    
+    # Strain max value - optional, with default fallback
+    strain_max_override = dashboard.iloc[9, 0] if len(dashboard) > 9 else None  # Row 10 (0-indexed row 9)    # Step 3: Load Geometry_Lookup sheet to find default values
     geometry_df = pd.read_excel(file_path, sheet_name="Geometry_Lookup")
     material_row = geometry_df[
         geometry_df["Material"].str.lower() == str(material).lower()
@@ -92,5 +96,18 @@ def get_user_inputs(file_path):
     A_0 = validate_override(override_A0, default_A0,
                             "Cross-sectional area (A_0)")
     L_0 = validate_override(override_L0, default_L0, "Gauge length (L_0)")
+    
+    # Step 7: Handle strain_max with validation
+    if strain_max_override is not None and pd.notna(strain_max_override):
+        if not isinstance(strain_max_override, (int, float)) or strain_max_override <= 0:
+            raise ValueError("Override strain_max must be a positive number.")
+        if strain_max_override > 1.0:
+            raise ValueError("Override strain_max should not exceed 1.0 (100% strain).")
+        strain_max = float(strain_max_override)
+        print(f"Maximum strain override provided. Using: {strain_max:.3f}")
+    else:
+        default_strain_max = 0.3  # Default 30% strain
+        strain_max = default_strain_max
+        print(f"Maximum strain override not provided. Using default: {strain_max:.3f}")
 
-    return material, A_0, L_0, use_simulation
+    return material, A_0, L_0, use_simulation, strain_max
