@@ -147,9 +147,12 @@ def plot_engineering_true_combined_subplots(
 
         # Mark the YIELD STRENGTH (where permanent deformation begins)
         # ------------------------------------------------------------
+        # Convert yield strength from MPa to GPa for plotting consistency
+        yield_strength_gpa = props['Yield Strength (MPa)'] / 1000
+        
         # 1. Draw a horizontal green dashed line across the plot at the
         #    yield stress level
-        axs[0].axhline(props['Yield Strength (MPa)'], color='green',
+        axs[0].axhline(yield_strength_gpa, color='green',
                        linestyle='--', linewidth=1.5, alpha=0.7)
 
         # 2. Add a label with an arrow pointing to this line
@@ -159,30 +162,30 @@ def plot_engineering_true_combined_subplots(
         #    - The "\n" creates a line break to show the value below
         #      the label
         axs[0].annotate(
-            f"Yield\n{props['Yield Strength (MPa)']:.1f} MPa",
-            xy=(eng_x_max * 0.05, props['Yield Strength (MPa)']),
+            f"Yield\n{yield_strength_gpa:.3f} GPa",
+            xy=(eng_x_max * 0.05, yield_strength_gpa),
             xytext=(eng_x_max * 0.15,
-                    props['Yield Strength (MPa)'] + eng_y_offset * 2),
+                    yield_strength_gpa + eng_y_offset * 2),
             arrowprops=dict(arrowstyle='->', color='green', lw=1.2),
             color='green', **text_style
         )
 
+        # Convert UTS from MPa to GPa for plotting consistency
+        uts_gpa = props['Ultimate Tensile Strength (UTS, MPa)'] / 1000
+        
         # Mark the ULTIMATE TENSILE STRENGTH / UTS (maximum stress
         # before failure)
         # ------------------------------------------------------------
         # Same process as above, but for the maximum strength point
         # (in orange)
-        axs[0].axhline(props['Ultimate Tensile Strength (UTS, MPa)'],
+        axs[0].axhline(uts_gpa,
                        color='orange', linestyle='--', linewidth=1.5,
                        alpha=0.7)
         axs[0].annotate(
-            f"UTS\n{props['Ultimate Tensile Strength (UTS, MPa)']:.1f} "
-            f"MPa",
-            xy=(eng_x_max * 0.05,
-                props['Ultimate Tensile Strength (UTS, MPa)']),
+            f"UTS\n{uts_gpa:.3f} GPa",
+            xy=(eng_x_max * 0.05, uts_gpa),
             xytext=(eng_x_max * 0.15,
-                    props['Ultimate Tensile Strength (UTS, MPa)']
-                    + eng_y_offset * 2),
+                    uts_gpa + eng_y_offset * 2),
             arrowprops=dict(arrowstyle='->', color='orange', lw=1.2),
             color='orange', **text_style
         )
@@ -251,16 +254,16 @@ def plot_engineering_true_combined_subplots(
         # Mark the TRUE STRESS AT UTS (maximum true stress)
         # ------------------------------------------------------------
         true_stress_uts_gpa = props['True Stress at UTS (GPa)']
-        true_stress_uts_mpa = true_stress_uts_gpa * 1000  # Convert GPa to MPa
-        axs[1].axhline(true_stress_uts_mpa,
+        # Keep in GPa for consistency with axis units
+        axs[1].axhline(true_stress_uts_gpa,
                        color='orange', linestyle='--', linewidth=1.5,
                        alpha=0.7)
         axs[1].annotate(
             f"True Stress at UTS\n"
-            f"{true_stress_uts_mpa:.1f} MPa",
-            xy=(true_x_max * 0.05, true_stress_uts_mpa),
+            f"{true_stress_uts_gpa:.3f} GPa",
+            xy=(true_x_max * 0.05, true_stress_uts_gpa),
             xytext=(true_x_max * 0.2,
-                    true_stress_uts_mpa + true_y_offset * 2),
+                    true_stress_uts_gpa + true_y_offset * 2),
             arrowprops=dict(arrowstyle='->', color='orange', lw=1.2),
             color='orange', **text_style
         )
