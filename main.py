@@ -18,11 +18,12 @@ file_path = Path("Tensile_Analyzer_MasterWorkbook.xlsx")
 
 # Step 2: Get user inputs from Dashboard sheet
 material, A_0, L_0, use_simulation = get_user_inputs(file_path)
-validate_inputs(material, A_0, L_0, use_simulation)
 
 # Step 3: Get material properties and validate geometry
 geometry_df = pd.read_excel(file_path, sheet_name="Geometry_Lookup")
 properties_df = pd.read_excel(file_path, sheet_name="Material_Properties")
+
+# Note: validate_inputs will be called later with the proper DataFrame parameter
 
 material_props = get_material_properties(
     material, geometry_df, properties_df
@@ -30,18 +31,18 @@ material_props = get_material_properties(
 
 # Override A_0 and L_0 from Dashboard if given
 # prefer dashboard overrides; fall back to material properties
-A0_final = A_0 if A_0 is not None else material_props['A_0 (mm²)']
+A0_final = A_0 if A_0 is not None else material_props['A_0 (mm^2)']
 L0_final = L_0 if L_0 is not None else material_props['L_0 (mm)']
 
 # store final geometry back into material_props for consistency
-material_props["A_0 (mm²)"] = A0_final
+material_props["A_0 (mm^2)"] = A0_final
 material_props["L_0 (mm)"] = L0_final
 
 # Step 4: Generate stress-strain data
 if use_simulation:
     # Simulate stress-strain data using material properties
     df = simulate_stress_strain(
-        E=material_props["Elastic Modulus (MPa)"],
+        E=material_props["Elastic Modulus (GPa)"],
         sigma_y=material_props["Yield Strength (MPa)"],
         K=material_props["Strength Coefficient K (MPa)"],
         n=material_props["n (Strain Hardening Exponent)"],
