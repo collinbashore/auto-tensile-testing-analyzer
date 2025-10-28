@@ -27,8 +27,7 @@ def get_user_inputs(file_path):
     """
 
     # Step 1: Read column C from the Dashboard sheet
-    dashboard = pd.read_excel(file_path, sheet_name="Dashboard",
-                              usecols="C")
+    dashboard = pd.read_excel(file_path, sheet_name="Dashboard", usecols="C")
 
     # Check if we have enough rows for required fields
     if len(dashboard) < 6:
