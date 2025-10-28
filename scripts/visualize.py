@@ -38,8 +38,9 @@ def plot_engineering_true_combined_subplots(
         props_df = extract_properties(df, material_name)
         props = props_df.iloc[0].to_dict()  # Convert DataFrame row to dictionary for compatibility
 
-    # Figure: 1×3 subplots (wide layout)
-    fig, axs = plt.subplots(1, 3, figsize=(18, 5))
+    # Figure: 1×3 subplots (wide layout) with better spacing
+    fig, axs = plt.subplots(1, 3, figsize=(18, 6))
+    plt.subplots_adjust(wspace=0.3)  # Add more space between subplots
 
     # Add a main title for the entire figure
     fig.suptitle(f"Stress-Strain Curves for {material_name}", fontsize=14)
@@ -117,29 +118,9 @@ def plot_engineering_true_combined_subplots(
         # range. This way, labels always look good no matter how big or
         # small our numbers are.
 
-        # 2.5% of vertical/horizontal range
+        # Calculate spacing for labels (only what we need for cleaner plots)
         eng_y_offset = (eng_y_max - eng_y_min) * 0.025
-        eng_x_offset = (eng_x_max - eng_x_min) * 0.025
         true_y_offset = (true_y_max - true_y_min) * 0.025
-        true_x_offset = (true_x_max - true_x_min) * 0.025
-
-        # STEP 3: Create a consistent style for all text labels
-        # ---------------------------------------------------------------
-        # This is like creating a "template" for how all our labels
-        # should look:
-        # - Small but readable font (size 9)
-        # - Bold text so it stands out
-        # - White background box with gray border (makes text easier to
-        #   read)
-        # - Slightly transparent (alpha=0.85) so it doesn't completely
-        #   hide the graph
-
-        text_style = {
-            'fontsize': 9,
-            'fontweight': 'bold',
-            'bbox': dict(boxstyle='round,pad=0.4', facecolor='white',
-                         edgecolor='gray', alpha=0.85)
-        }
 
         # ================================================================
         # ANNOTATE THE ENGINEERING STRESS-STRAIN PLOT (Left subplot)
@@ -147,64 +128,39 @@ def plot_engineering_true_combined_subplots(
 
         # Mark the YIELD STRENGTH (where permanent deformation begins)
         # ------------------------------------------------------------
-        # Convert yield strength from MPa to GPa for plotting consistency
+        # Convert properties from MPa to GPa for plotting consistency
         yield_strength_gpa = props['Yield Strength (MPa)'] / 1000
-        
-        # 1. Draw a horizontal green dashed line across the plot at the
-        #    yield stress level
-        axs[0].axhline(yield_strength_gpa, color='green',
-                       linestyle='--', linewidth=1.5, alpha=0.7)
-
-        # 2. Add a label with an arrow pointing to this line
-        #    - xy = where the arrow points TO (the actual yield point
-        #      on the graph)
-        #    - xytext = where the text box appears
-        #    - The "\n" creates a line break to show the value below
-        #      the label
-        axs[0].annotate(
-            f"Yield\n{yield_strength_gpa:.3f} GPa",
-            xy=(eng_x_max * 0.05, yield_strength_gpa),
-            xytext=(eng_x_max * 0.15,
-                    yield_strength_gpa + eng_y_offset * 2),
-            arrowprops=dict(arrowstyle='->', color='green', lw=1.2),
-            color='green', **text_style
-        )
-
-        # Convert UTS from MPa to GPa for plotting consistency
         uts_gpa = props['Ultimate Tensile Strength (UTS, MPa)'] / 1000
         
-        # Mark the ULTIMATE TENSILE STRENGTH / UTS (maximum stress
-        # before failure)
-        # ------------------------------------------------------------
-        # Same process as above, but for the maximum strength point
-        # (in orange)
-        axs[0].axhline(uts_gpa,
-                       color='orange', linestyle='--', linewidth=1.5,
-                       alpha=0.7)
-        axs[0].annotate(
-            f"UTS\n{uts_gpa:.3f} GPa",
-            xy=(eng_x_max * 0.05, uts_gpa),
-            xytext=(eng_x_max * 0.15,
-                    uts_gpa + eng_y_offset * 2),
-            arrowprops=dict(arrowstyle='->', color='orange', lw=1.2),
-            color='orange', **text_style
-        )
+        # Add clean horizontal lines for key stress levels
+        axs[0].axhline(yield_strength_gpa, color='green',
+                       linestyle='--', linewidth=1.2, alpha=0.8)
+        axs[0].axhline(uts_gpa, color='orange',
+                       linestyle='--', linewidth=1.2, alpha=0.8)
 
-        # Mark the FRACTURE POINT (where the material breaks)
-        # ------------------------------------------------------------
-        # This time we draw a VERTICAL line (axvline) because fracture
-        # is about how much the material stretched (strain on x-axis),
-        # not stress level
+        # Add simple text labels positioned to avoid overlap
+        # Place yield label on the left side
+        axs[0].text(eng_x_max * 0.02, yield_strength_gpa + eng_y_offset * 0.5,
+                   f'Yield: {yield_strength_gpa:.3f} GPa',
+                   color='green', fontsize=8, fontweight='bold',
+                   bbox=dict(boxstyle="round,pad=0.3", facecolor='white', alpha=0.8))
+        
+        # Place UTS label on the right side to avoid overlap
+        axs[0].text(eng_x_max * 0.65, uts_gpa + eng_y_offset * 0.5,
+                   f'UTS: {uts_gpa:.3f} GPa',
+                   color='orange', fontsize=8, fontweight='bold',
+                   bbox=dict(boxstyle="round,pad=0.3", facecolor='white', alpha=0.8))
+
+        # Mark the FRACTURE POINT with a simple vertical line
         axs[0].axvline(props['Fracture Strain'], color='purple',
-                       linestyle='--', linewidth=1.5, alpha=0.7)
-        axs[0].annotate(
-            f"Fracture\nε = {props['Fracture Strain']:.3f}",
-            xy=(props['Fracture Strain'], eng_y_max * 0.3),
-            xytext=(props['Fracture Strain'] - eng_x_offset * 3,
-                    eng_y_max * 0.4),
-            arrowprops=dict(arrowstyle='->', color='purple', lw=1.2),
-            color='purple', **text_style
-        )
+                       linestyle='--', linewidth=1.2, alpha=0.8)
+        
+        # Add simple fracture label at bottom
+        axs[0].text(props['Fracture Strain'], eng_y_max * 0.05,
+                   f'Fracture\nε = {props["Fracture Strain"]:.3f}',
+                   color='purple', fontsize=8, fontweight='bold',
+                   ha='center', va='bottom',
+                   bbox=dict(boxstyle="round,pad=0.3", facecolor='white', alpha=0.8))
 
         # Create a SUMMARY BOX with key material properties
         # ------------------------------------------------------------
@@ -216,32 +172,22 @@ def plot_engineering_true_combined_subplots(
         # The \n creates new lines between each property
         # The ━ characters create a visual separator line
 
+        # Simplified material properties box
         props_text = (
             f"Material Properties:\n"
-            f"━━━━━━━━━━━━━━━━━\n"
-            f"Resilience: {props['Resilience (MPa)']:.2f} MPa\n"
-            f"Toughness: {props['Toughness (MPa)']:.2f} MPa\n"
-            f"Elastic Modulus: "
-            f"{props['Elastic Modulus (GPa)']:.2f} GPa\n"
-            f"% Elongation: {props['Percent Elongation (%)']:.1f}%"
+            f"E: {props['Elastic Modulus (GPa)']:.1f} GPa\n"
+            f"Elongation: {props['Percent Elongation (%)']:.1f}%"
         )
 
-        # Place the text box using "axis coordinates"
-        # (transform=axs[0].transAxes)
-        # This means (0.97, 0.97) = 97% to the right, 97% up from
-        # bottom-left corner
-        # So the box will always be in the upper-right, no matter what
-        # our data values are
+        # Place a smaller, cleaner text box in upper-right
         axs[0].text(
-            0.97, 0.97, props_text,
-            transform=axs[0].transAxes,  # Use relative positioning
-            verticalalignment='top',  # Align top of text box
-            horizontalalignment='right',  # Align right edge of box
-            bbox=dict(boxstyle='round,pad=0.6', facecolor='lightblue',
-                      edgecolor='darkblue', alpha=0.85, linewidth=1.5),
-            fontsize=8.5,
-            family='monospace',  # Monospace font makes numbers line up
-            fontweight='normal'
+            0.98, 0.98, props_text,
+            transform=axs[0].transAxes,
+            verticalalignment='top',
+            horizontalalignment='right',
+            fontsize=9,
+            bbox=dict(boxstyle='round,pad=0.4', facecolor='lightblue',
+                      edgecolor='darkblue', alpha=0.85, linewidth=1)
         )
 
         # ================================================================
@@ -251,61 +197,41 @@ def plot_engineering_true_combined_subplots(
         # area as the material stretches (engineering stress assumes
         # constant area)
 
-        # Mark the TRUE STRESS AT UTS (maximum true stress)
-        # ------------------------------------------------------------
+        # Add clean reference lines for True Stress plot
         true_stress_uts_gpa = props['True Stress at UTS (GPa)']
-        # Keep in GPa for consistency with axis units
-        axs[1].axhline(true_stress_uts_gpa,
-                       color='orange', linestyle='--', linewidth=1.5,
-                       alpha=0.7)
-        axs[1].annotate(
-            f"True Stress at UTS\n"
-            f"{true_stress_uts_gpa:.3f} GPa",
-            xy=(true_x_max * 0.05, true_stress_uts_gpa),
-            xytext=(true_x_max * 0.2,
-                    true_stress_uts_gpa + true_y_offset * 2),
-            arrowprops=dict(arrowstyle='->', color='orange', lw=1.2),
-            color='orange', **text_style
-        )
-
-        # Mark the NECKING POINT (where the material starts to narrow
-        # / thin out)
-        # ------------------------------------------------------------
-        # Necking is when a material develops a "neck" or narrow
-        # section before breaking
+        axs[1].axhline(true_stress_uts_gpa, color='orange',
+                       linestyle='--', linewidth=1.2, alpha=0.8)
         axs[1].axvline(props['Necking Strain'], color='purple',
-                       linestyle='--', linewidth=1.5, alpha=0.7)
-        axs[1].annotate(
-            f"Necking Point\nε_true = {props['Necking Strain']:.3f}",
-            xy=(props['Necking Strain'], true_y_max * 0.5),
-            xytext=(props['Necking Strain'] - true_x_offset * 3,
-                    true_y_max * 0.6),
-            arrowprops=dict(arrowstyle='->', color='purple', lw=1.2),
-            color='purple', **text_style
-        )
+                       linestyle='--', linewidth=1.2, alpha=0.8)
 
-        # Create a SUMMARY BOX for true strain analysis
-        # ------------------------------------------------------------
+        # Add simple labels positioned to avoid overlap
+        axs[1].text(true_x_max * 0.02, true_stress_uts_gpa + true_y_offset * 0.5,
+                   f'True Stress at UTS\n{true_stress_uts_gpa:.3f} GPa',
+                   color='orange', fontsize=8, fontweight='bold',
+                   bbox=dict(boxstyle="round,pad=0.3", facecolor='white', alpha=0.8))
+        
+        axs[1].text(props['Necking Strain'], true_y_max * 0.05,
+                   f'Necking Point\nε = {props["Necking Strain"]:.3f}',
+                   color='purple', fontsize=8, fontweight='bold',
+                   ha='center', va='bottom',
+                   bbox=dict(boxstyle="round,pad=0.3", facecolor='white', alpha=0.8))
+
+        # Simplified properties box for True Stress plot
         true_props_text = (
             f"True Strain Analysis:\n"
-            f"━━━━━━━━━━━━━━━━━\n"
-            f"Necking Strain: {props['Necking Strain']:.3f}\n"
-            f"% Area Reduction: "
-            f"{props['Percent Reduction in Area (%)']:.1f}%"
+            f"Necking: {props['Necking Strain']:.3f}\n"
+            f"Area Reduction: {props['Percent Reduction in Area (%)']:.1f}%"
         )
 
         axs[1].text(
-            0.97, 0.97, true_props_text,
+            0.98, 0.98, true_props_text,
             transform=axs[1].transAxes,
             verticalalignment='top',
             horizontalalignment='right',
-            bbox=dict(boxstyle='round,pad=0.6',
+            fontsize=9,
+            bbox=dict(boxstyle='round,pad=0.4',
                       facecolor='lightyellow',
-                      edgecolor='darkorange',
-                      alpha=0.85, linewidth=1.5),
-            fontsize=8.5,
-            family='monospace',
-            fontweight='normal'
+                      alpha=0.85, linewidth=1)
         )
 
     # ====================================================================
