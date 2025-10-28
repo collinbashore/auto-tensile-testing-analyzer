@@ -79,7 +79,7 @@ workbook_path = Path("Tensile_Analyzer_MasterWorkbook.xlsx")
 wb = load_workbook(workbook_path)
 ws = wb["Dashboard"]
 
-# Insert the image into a specific cell (e.g., H10)
+# Insert the image into a specific cell (e.g., B13)
 img = Image(str(plot_path))
 ws.add_image(img, "B13")
 
