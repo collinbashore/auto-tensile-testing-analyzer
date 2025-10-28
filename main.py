@@ -82,7 +82,7 @@ ws = wb["Dashboard"]
 
 # Insert the image into a specific cell (e.g., H10)
 img = Image(str(plot_path))
-ws.add_image(img, "H10")
+ws.add_image(img, "B13")
 
 # Save the workbook with the plots inserted
 wb.save(workbook_path)
