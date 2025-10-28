@@ -26,17 +26,25 @@ def get_user_inputs(file_path):
         If required values are missing or of the wrong type.
     """
 
-    # Step 1: Read the first 10 rows of only column C from the Dashboard
-    # sheet
+    # Step 1: Read column C from the Dashboard sheet
     dashboard = pd.read_excel(file_path, sheet_name="Dashboard",
-                              usecols="C", nrows=10)
+                              usecols="C")
+
+    # Check if we have enough rows for required fields
+    if len(dashboard) < 6:
+        raise ValueError(
+            f"Dashboard sheet must have at least 6 rows in column C. "
+            f"Found only {len(dashboard)} rows. Please check your Excel file."
+        )
 
     # Step 2: Extract individual values
     material = dashboard.iloc[4, 0]  # Material name from cell C5
-    override_A0 = dashboard.iloc[8, 0]  # Override A0 from cell C9
-    override_L0 = dashboard.iloc[9, 0]  # Override L0 from cell C10
     # Use simulate data (TRUE) or real data (FALSE) from cell C6
     use_simulation = dashboard.iloc[5, 0]
+
+    # Override values are optional - only read if they exist
+    override_A0 = dashboard.iloc[8, 0] if len(dashboard) > 8 else None
+    override_L0 = dashboard.iloc[9, 0] if len(dashboard) > 9 else None
 
     # Step 3: Load Geometry_Lookup sheet to find default values
     geometry_df = pd.read_excel(file_path, sheet_name="Geometry_Lookup")
@@ -45,7 +53,7 @@ def get_user_inputs(file_path):
     ]
 
     # Step 4: Get default values if overrides are not provided
-    default_A0 = material_row["A_0 (mm²)"].values[0]
+    default_A0 = material_row["A_0 (mm^2)"].values[0]
     default_L0 = material_row["L_0 (mm)"].values[0]
 
     # Step 5: Begin validations
