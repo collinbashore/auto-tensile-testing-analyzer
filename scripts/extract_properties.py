@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 
 def extract_properties(df, material_name='Unknown'):
-    ''' 
+    """
     This function extracts key mechanical properties from the stress-strain DataFrame.
-    
+
     Parameters:
     -----------
     df : pd.DataFrame
@@ -33,7 +33,7 @@ def extract_properties(df, material_name='Unknown'):
             - 'Resilience (MPa or MJ/m^3)': Area under the stress-strain curve up to yield point
             - 'True Stress at UTS (GPa)': True stress corresponding to UTS
             - 'Necking strain': True strain at UTS
-            - 'Percent Reduction in Area (%)': Calculated from true fracture strain (or from the initial and 
+            - 'Percent Reduction in Area (%)': Calculated from true fracture strain (or from the initial and
             final cross-sectional areas if available)
 
     Notes:
@@ -41,9 +41,9 @@ def extract_properties(df, material_name='Unknown'):
     This function assumes that the input data is sorted by increasing strain.
     It uses simple methods for estimating properties and is ideal for simulation or educational purposes.
 
-    '''
+    """
 
-    # Calculate Elastic Modulus (Young's Modulus) using the first two data points (the first data point is 
+    # Calculate Elastic Modulus (Young's Modulus) using the first two data points (the first data point is
     # the origin of the plot (skipped in calculation), only the second data point ()index 1, not 0) is needed)
     # Formula: E = stress / strain (only valid in the elastic region)
     elastic_modulus = df['Engineering Stress (GPa)'].iloc[1] / df['Engineering Strain'].iloc[1]
