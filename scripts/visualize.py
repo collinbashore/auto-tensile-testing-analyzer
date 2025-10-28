@@ -109,6 +109,17 @@ def plot_engineering_true_combined_subplots(
                                   df['True Stress (GPa)'].max())
         true_x_max = df['True Strain'].max()
 
+        # Set consistent y-axis limits for all three plots
+        # Find the maximum stress value across both engineering and true stress
+        max_stress = max(eng_y_max, true_y_max)
+        # Round up to the nearest 0.1 GPa increment
+        y_max_consistent = (int(max_stress * 10) + 1) / 10
+        # Set all three subplots to have the same y-axis range: 0 to y_max_consistent
+        for ax in axs:
+            ax.set_ylim(0, y_max_consistent)
+            # Set y-axis ticks in 0.1 GPa increments
+            ax.set_yticks([i * 0.1 for i in range(int(y_max_consistent * 10) + 1)])
+
         # STEP 2: Calculate smart spacing for our labels
         # ---------------------------------------------------------------
         # Instead of using fixed distances (like "10 units to the right")
