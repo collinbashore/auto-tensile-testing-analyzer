@@ -26,7 +26,7 @@ def get_user_inputs(file_path):
         If required values are missing or of the wrong type.
     """
 
-    # Step 1: Read the first 6 rows of only column B from the Dashboard
+    # Step 1: Read the first 10 rows of only column C from the Dashboard
     # sheet
     dashboard = pd.read_excel(file_path, sheet_name="Dashboard",
                               usecols="C", nrows=10)
