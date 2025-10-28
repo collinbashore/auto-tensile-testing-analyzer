@@ -21,7 +21,7 @@ from scripts.visualize import plot_engineering_true_combined_subplots
 file_path = Path("Tensile_Analyzer_MasterWorkbook.xlsx")
 
 # Step 2: Get user inputs from Dashboard sheet
-material, A_0, L_0, use_simulation = get_user_inputs(file_path)
+material, A_0, L_0, use_simulation, strain_max = get_user_inputs(file_path)
 
 # Step 3: Get material properties and validate geometry
 geometry_df = pd.read_excel(file_path, sheet_name="Geometry_Lookup")
@@ -52,6 +52,7 @@ if use_simulation:
         n=material_props["n (Strain Hardening Exponent)"],
         L_0=L_0,
         A_0=A_0,
+        strain_max=strain_max,
     )
     output_sheet_name = "Simulated_Data"
 else:
