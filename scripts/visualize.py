@@ -104,12 +104,10 @@ def plot_engineering_true_combined_subplots(
 
         eng_y_min, eng_y_max = (df['Engineering Stress (GPa)'].min(),
                                 df['Engineering Stress (GPa)'].max())
-        eng_x_min, eng_x_max = (df['Engineering Strain'].min(),
-                                df['Engineering Strain'].max())
+        eng_x_max = df['Engineering Strain'].max()
         true_y_min, true_y_max = (df['True Stress (GPa)'].min(),
                                   df['True Stress (GPa)'].max())
-        true_x_min, true_x_max = (df['True Strain'].min(),
-                                  df['True Strain'].max())
+        true_x_max = df['True Strain'].max()
 
         # STEP 2: Calculate smart spacing for our labels
         # ---------------------------------------------------------------
