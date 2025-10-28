@@ -58,12 +58,11 @@ else:
     output_sheet_name = "Stress_Strain_Calculations"
 
 # Step 5: Extract properties
-summary = extract_properties(df, material_props)
+summary_df = extract_properties(df, material)  # Now returns DataFrame directly
 with pd.ExcelWriter(
         file_path, engine='openpyxl', mode='a',
         if_sheet_exists='replace') as writer:
     df.to_excel(writer, sheet_name=output_sheet_name, index=False)
-    summary_df = pd.DataFrame([summary])
     summary_df.to_excel(writer, sheet_name="Extracted_Properties", index=False)
 
 # Step 6: Generate visualizations
