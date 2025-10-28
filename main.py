@@ -3,6 +3,10 @@ import pandas as pd  # For data manipulation
 from pathlib import Path  # For handling file paths
 from openpyxl import load_workbook  # For Excel file operations
 from openpyxl.drawing.image import Image  # For handling images in Excel
+import warnings  # For suppressing warnings
+
+# Suppress openpyxl warnings about unsupported Excel features
+warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
 # Import all modules from the 'scripts' file directory
 from scripts.materials_selector import get_material_properties
