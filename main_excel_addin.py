@@ -1,5 +1,4 @@
-
-
+# Main Excel Add-in Script for Tensile Test Analyzer
 
 
 def run_main():
