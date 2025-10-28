@@ -37,32 +37,30 @@ def get_user_inputs(file_path):
             f"Found only {len(dashboard)} rows. Please check your Excel file."
         )
 
-    # Step 2: Extract individual values
-    material = dashboard.iloc[4, 0]  # Material name from cell C5
-    # Use simulate data (TRUE) or real data (FALSE) from cell C6
-    use_simulation = dashboard.iloc[5, 0]
+    # Step 2: Extract individual values (corrected indices based on actual data)
+    material = dashboard.iloc[3, 0]  # Material name from row 4 (0-indexed row 3)
+    # Use simulate data (TRUE) or real data (FALSE) from row 5 (0-indexed row 4)
+    use_simulation = dashboard.iloc[4, 0]
 
     # Override values are optional - only read if they exist
-    override_A0 = dashboard.iloc[8, 0] if len(dashboard) > 8 else None
-    override_L0 = dashboard.iloc[9, 0] if len(dashboard) > 9 else None
-
-    # Step 3: Load Geometry_Lookup sheet to find default values
+    override_A0 = dashboard.iloc[7, 0] if len(dashboard) > 7 else None  # Adjusted index
+    override_L0 = dashboard.iloc[8, 0] if len(dashboard) > 8 else None  # Adjusted index    # Step 3: Load Geometry_Lookup sheet to find default values
     geometry_df = pd.read_excel(file_path, sheet_name="Geometry_Lookup")
     material_row = geometry_df[
         geometry_df["Material"].str.lower() == str(material).lower()
     ]
 
-    # Step 4: Get default values if overrides are not provided
-    default_A0 = material_row["A_0 (mm^2)"].values[0]
-    default_L0 = material_row["L_0 (mm)"].values[0]
-
-    # Step 5: Begin validations
-
-    # Check if material exists in Geometry_Lookup sheet
+    # Step 4: Check if material exists in Geometry_Lookup sheet BEFORE accessing values
     if material_row.empty:
         raise ValueError(
             f"Material '{material}' not found in Geometry_Lookup sheet."
         )
+
+    # Step 5: Get default values if overrides are not provided
+    default_A0 = material_row["A_0 (mm^2)"].values[0]
+    default_L0 = material_row["L_0 (mm)"].values[0]
+
+    # Step 6: Begin validations
 
     # Material name must not be empty or NaN
     if (pd.isna(material) or not isinstance(material, str)
