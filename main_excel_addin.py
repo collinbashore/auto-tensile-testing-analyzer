@@ -1,18 +1,27 @@
-# Import necessary modules and libraries
-from scripts.user_inputs import get_user_inputs
-from scripts.input_validation import validate_inputs
-from scripts.materials_selector import get_material_properties
-from scripts.simulate_data import simulate_stress_strain
-from scripts.calculate_stress_strain import calculate_stress_strain
-from scripts.extract_properties import extract_properties
-from scripts.visualize import plot_engineering_true_combined_subplots
-from openpyxl import load_workbook
-from openpyxl.drawing.image import Image
-import pandas as pd
-from pathlib import Path
+
+
 
 
 def run_main():
+    '''Main function to run the tensile analyzer Excel add-in workflow.
+
+    Returns:
+        df (pd.DataFrame): DataFrame containing stress-strain data.
+        properties (dict): Extracted mechanical properties.
+        fig (matplotlib.figure.Figure): Generated plot figure.
+    '''
+
+    # Import necessary modules and libraries
+    from scripts.user_inputs import get_user_inputs
+    from scripts.input_validation import validate_inputs
+    from scripts.materials_selector import get_material_properties
+    from scripts.simulate_data import simulate_stress_strain
+    from scripts.calculate_stress_strain import calculate_stress_strain
+    from scripts.extract_properties import extract_properties
+    from scripts.visualize import plot_engineering_true_combined_subplots
+    import pandas as pd
+    from pathlib import Path
+
     # Define file path
     workbook_path = Path("Tensile_Analyzer_MasterWorkbook.xlsx")
 
@@ -43,7 +52,7 @@ def run_main():
 
     # Step 4: Simulate or Calculate data
     # If the user clicked the checkbox to use simulated data
-    if use_simulation == bool("TRUE"):
+    if use_simulation:
         df = simulate_stress_strain(
             E=material_props['Elastic Modulus (GPa)'],
             sigma_y=material_props['Yield Strength (MPa)'],
@@ -75,10 +84,13 @@ def run_main():
     fig.savefig(fig_path, dpi=300)
 
     # Step 7: Insert plot into Dashboard
+    from openpyxl import load_workbook
+    from openpyxl.drawing.image import Image
+
     wb = load_workbook(workbook_path)
     ws = wb["Dashboard"]
     img = Image(str(fig_path))
     ws.add_image(img, "E10")
     wb.save(workbook_path)
 
-    return f"Dashboard updated for material: {material}"
+    return df, properties, fig
