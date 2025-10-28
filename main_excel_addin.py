@@ -89,7 +89,7 @@ def run_main():
     wb = load_workbook(workbook_path)
     ws = wb["Dashboard"]
     img = Image(str(fig_path))
-    ws.add_image(img, "E10")
+    ws.add_image(img, "B13")
     wb.save(workbook_path)
 
     return df, properties, fig
