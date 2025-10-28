@@ -35,7 +35,8 @@ def plot_engineering_true_combined_subplots(
 
     # Auto-generate properties if not provided
     if props is None:
-        props = extract_properties(df, material_name)
+        props_df = extract_properties(df, material_name)
+        props = props_df.iloc[0].to_dict()  # Convert DataFrame row to dictionary for compatibility
 
     # Figure: 1×3 subplots (wide layout)
     fig, axs = plt.subplots(1, 3, figsize=(18, 5))
