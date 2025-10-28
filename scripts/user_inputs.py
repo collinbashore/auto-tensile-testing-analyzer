@@ -40,14 +40,14 @@ def get_user_inputs(file_path):
     # Step 2: Extract individual values (corrected indices based on actual data)
     material = dashboard.iloc[3, 0]  # Material name from row 4 (0-indexed row 3)
     # Use simulate data (TRUE) or real data (FALSE) from row 5 (0-indexed row 4)
-    use_simulation = dashboard.iloc[4, 0]
+    use_simulation = dashboard.iloc[5, 0]
 
     # Override values are optional - only read if they exist
     override_A0 = dashboard.iloc[7, 0] if len(dashboard) > 7 else None  # Adjusted index
     override_L0 = dashboard.iloc[8, 0] if len(dashboard) > 8 else None  # Adjusted index
     
     # Strain max value - optional, with default fallback
-    strain_max_override = dashboard.iloc[9, 0] if len(dashboard) > 9 else None  # Row 10 (0-indexed row 9)    # Step 3: Load Geometry_Lookup sheet to find default values
+    strain_max_override = dashboard.iloc[4, 0] if len(dashboard) > 4 else None  # Row 5 (0-indexed row 4)
     geometry_df = pd.read_excel(file_path, sheet_name="Geometry_Lookup")
     material_row = geometry_df[
         geometry_df["Material"].str.lower() == str(material).lower()
