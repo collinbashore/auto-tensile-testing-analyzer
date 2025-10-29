@@ -5,8 +5,7 @@ import numpy as np
 
 def calculate_stress_strain(df, A_0, L_0):
     """
-    This function calculates the engineering and true stress-strain values
-    based on input tensile data.
+    This function calculates the engineering and true stress-strain values based on input tensile data.
 
     Parameters:
     -----------
@@ -25,21 +24,21 @@ def calculate_stress_strain(df, A_0, L_0):
     df = df.copy()  # To avoid modifying the original DataFrame
 
     # Engineering stress and strain
-    # Convert to GPa, where 1 N/mm² = 1 MPa = 1e-3 GPa
-    df['Engineering Stress (GPa)'] = (df['Force (N)'] / A_0) * 1e-3
+    # Convert to MPa, where 1 N/mm² = 1 MPa
+    df['Engineering Stress (MPa)'] = (df['Force (N)'] / A_0)
     df['Engineering Strain'] = df['Elongation (mm)'] / L_0
 
     # True stress and strain
     df['True Strain'] = np.log(1 + df['Engineering Strain'])
     # np.log is the natural logarithm function
 
-    df['True Stress (GPa)'] = (
-        df['Engineering Stress (GPa)']
+    df['True Stress (MPa)'] = (
+        df['Engineering Stress (MPa)']
         * (1 + df['Engineering Strain'])
     )
 
     # Return dataframe with relevant columns only
-    df = df[['Engineering Strain', 'Engineering Stress (GPa)',
-            'True Strain', 'True Stress (GPa)']]
+    df = df[['Engineering Strain', 'Engineering Stress (MPa)',
+            'True Strain', 'True Stress (MPa)']]
 
     return df
