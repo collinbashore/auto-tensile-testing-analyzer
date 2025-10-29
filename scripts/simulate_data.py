@@ -3,7 +3,7 @@ import pandas as pd
 
 
 def simulate_stress_strain(
-        E, sigma_y, K, n, L_0, A_0, strain_max=0.3, num_points=100):
+        E, sigma_y, K, n, L_0, A_0, uts, strain_max=0.3, num_points=100, decay_factor=15):
     """
     This function generates synthetic tensile test data that includes:
     - Engineering stress-strain values
@@ -50,25 +50,32 @@ def simulate_stress_strain(
     # Yield strain ε_y from σ_y (MPa) and E (GPa -> MPa)
     yield_strain = sigma_y / (E * 1e3)
 
-    # Engineering stress (GPa)
-    # - Elastic: σ = E·ε (GPa)
-    # - Plastic: compute in MPa then convert to GPa for consistency
+    # Ultimate tensile strain from UTS (MPa) and E (GPa -> MPa)
+    uts_strain = uts / (E * 1e3)
+
+    # Engineering stress (MPa)
+    # - Elastic: compute in MPa
+    elastic_mpa = (E * 1e3) * eng_strain
+
+    # - Plastic: compute in MPa
     plastic_mpa = sigma_y + K * (
         np.maximum(eng_strain - yield_strain, 0.0)
     ) ** n
-    plastic_gpa = plastic_mpa * 1e-3
 
-    eng_stress = np.where(
-        eng_strain <= yield_strain,
-        E * eng_strain,
-        plastic_gpa,
+    # Compute Engineering Stress (MPa) using piecewise function
+    # np.piecewise(array of values, conditions (in a list), functions (in a list))
+    eng_stress = np.piecewise(eng_strain,
+        [eng_strain < yield_strain, (yield_strain >= eng_strain) & (eng_strain <= uts_strain), eng_strain > uts_strain],
+        [elastic_mpa, plastic_mpa,
+         plastic_mpa * np.exp(-decay_factor * (eng_strain - uts_strain))]
     )
 
     # Kinematics and force
     elongation = eng_strain * L_0  # mm
-    # 1 GPa = 1e3 MPa; 1 MPa = 1 N/mm²
-    # => stress(GPa) * 1e3 (MPa) * A0 (mm²) = N
-    force = (eng_stress * 1e3) * A_0
+
+    # force = stress(MPa)* A0 (mm²) = N
+    # 1 MPa = 1 N/mm²
+    force = eng_stress * A_0
 
     # True measures
     true_strain = np.log1p(eng_strain)  # log(1+ε)
