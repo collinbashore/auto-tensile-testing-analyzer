@@ -3,7 +3,7 @@ import pandas as pd
 from scipy.optimize import curve_fit
 
 def simulate_stress_strain(
-        E, sigma_y, K, n, L_0, A_0, strain_max=0.3, num_points=100):
+        E, sigma_y, K, n, L_0, A_0, strain_max=0.3, num_points=100, fit_decay=True, default_decay=15):
     """
     This function generates synthetic tensile test data that includes:
     - Engineering stress-strain values
@@ -104,18 +104,18 @@ def simulate_stress_strain(
         uts = eng_stress[uts_index]
         post_strain = eng_strain[uts_index:]
         post_stress = eng_stress[uts_index:]
-        initial_decay = 15
+        default_decay = 15
         try:
             popt, _ = curve_fit(
                 lambda eps, d: exponential_decay(eps, d, uts, uts_strain),
                 post_strain,
                 post_stress,
-                p0=[initial_decay],
+                p0=[default_decay],
                 bounds=(0, 100)
             )
             return popt[0], uts, uts_strain
         except RuntimeError:
-            return initial_decay, uts, uts_strain
+            return default_decay, uts, uts_strain
 
 
 
@@ -126,10 +126,10 @@ def simulate_stress_strain(
                         plastic_mpa
     )
 
-    decay_factor, uts, uts_strain = fit_decay_factor(eng_stress, eng_stress)
-
-    post_uts_mask = eng_strain > uts_strain
-    eng_stress[post_uts_mask] = exponential_decay(eng_strain[post_uts_mask], decay_factor, uts, uts_strain)
+    if fit_decay:
+        decay_factor, uts, uts_strain = fit_decay_factor(eng_strain, eng_stress)
+        post_uts_mask = eng_strain > uts_strain
+        eng_stress[post_uts_mask] = exponential_decay(eng_stress[post_uts_mask], decay_factor, uts, uts_strain)
 
     # Kinematics and force
     elongation = eng_strain * L_0  # mm
