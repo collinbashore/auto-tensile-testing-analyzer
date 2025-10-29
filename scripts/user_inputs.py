@@ -96,7 +96,7 @@ def get_user_inputs(file_path):
     A_0 = validate_override(override_A0, default_A0,
                             "Cross-sectional area (A_0)")
     L_0 = validate_override(override_L0, default_L0, "Gauge length (L_0)")
-    
+
     # Step 7: Handle strain_max with validation
     if strain_max_override is not None and pd.notna(strain_max_override):
         if not isinstance(strain_max_override, (int, float)) or strain_max_override <= 0:
