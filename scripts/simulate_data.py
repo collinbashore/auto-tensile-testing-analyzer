@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
-
+from scipy.optimize import curve_fit
 
 def simulate_stress_strain(
-        E, sigma_y, K, n, L_0, A_0, uts, strain_max=0.3, num_points=100, decay_factor=15):
+        E, sigma_y, K, n, L_0, A_0, strain_max=0.3, num_points=100):
     """
     This function generates synthetic tensile test data that includes:
     - Engineering stress-strain values
@@ -40,9 +40,9 @@ def simulate_stress_strain(
         - "Force (N)"
         - "Elongation (mm)"
         - "Engineering Strain"
-        - "Engineering Stress (GPa)"
+        - "Engineering Stress (MPa)"
         - "True Strain"
-        - "True Stress (GPa)"
+        - "True Stress (MPa)"
     """
     # Generate engineering strain from 0 to strain_max
     eng_strain = np.linspace(0, strain_max, num_points)
@@ -51,7 +51,7 @@ def simulate_stress_strain(
     yield_strain = sigma_y / (E * 1e3)
 
     # Ultimate tensile strain from UTS (MPa) and E (GPa -> MPa)
-    uts_strain = uts / (E * 1e3)
+    # uts_strain = uts / (E * 1e3)  # This will be calculated by fit_decay_factor
 
     # Engineering stress (MPa)
     # - Elastic: compute in MPa
@@ -62,13 +62,74 @@ def simulate_stress_strain(
         np.maximum(eng_strain - yield_strain, 0.0)
     ) ** n
 
+    def exponential_decay(eng_strain, decay_factor, uts, uts_strain):
+        """Exponential decay function for post-UTS region.
+
+        Parameters:
+        -----------
+        eng_strain : np.ndarray
+            The engineering strain values.
+        decay_factor : float
+            The decay factor for the exponential function.
+        uts : float
+            The ultimate tensile strength.
+        uts_strain : float
+            The strain at ultimate tensile strength.
+
+        Returns:
+        --------
+        np.ndarray
+            The computed stress values after UTS.
+        """
+        return uts * np.exp(-decay_factor * (eng_strain - uts_strain))
+
+
+    def fit_decay_factor(eng_strain, eng_stress):
+        """Fit decay factor based on stress at a strain beyond UTS.
+
+        Parameters:
+        -----------
+        eng_strain : np.ndarray
+            The engineering strain values.
+        eng_stress : np.ndarray
+            The corresponding stress values.
+
+        Returns:
+        --------
+        float
+            The fitted decay factor.
+        """
+        uts_index = np.argmax(eng_stress)
+        uts_strain = eng_strain[uts_index]
+        uts = eng_stress[uts_index]
+        post_strain = eng_strain[uts_index:]
+        post_stress = eng_stress[uts_index:]
+        initial_decay = 15
+        try:
+            popt, _ = curve_fit(
+                lambda eps, d: exponential_decay(eps, d, uts, uts_strain),
+                post_strain,
+                post_stress,
+                p0=[initial_decay],
+                bounds=(0, 100)
+            )
+            return popt[0], uts, uts_strain
+        except RuntimeError:
+            return initial_decay, uts, uts_strain
+
+
+
     # Compute Engineering Stress (MPa) using piecewise function
     # np.piecewise(array of values, conditions (in a list), functions (in a list))
-    eng_stress = np.piecewise(eng_strain,
-        [eng_strain < yield_strain, (yield_strain >= eng_strain) & (eng_strain <= uts_strain), eng_strain > uts_strain],
-        [elastic_mpa, plastic_mpa,
-         plastic_mpa * np.exp(-decay_factor * (eng_strain - uts_strain))]
+    eng_stress = np.where(eng_strain <= yield_strain,
+                        elastic_mpa,
+                        plastic_mpa
     )
+
+    decay_factor, uts, uts_strain = fit_decay_factor(eng_stress, eng_stress)
+
+    post_uts_mask = eng_strain > uts_strain
+    eng_stress[post_uts_mask] = exponential_decay(eng_strain[post_uts_mask], decay_factor, uts, uts_strain)
 
     # Kinematics and force
     elongation = eng_strain * L_0  # mm
