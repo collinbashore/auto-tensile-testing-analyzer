@@ -53,6 +53,8 @@ if use_simulation:
         L_0=L_0,
         A_0=A_0,
         strain_max=material_props["Elongation at Break (Fracture Point)"],
+        fit_decay=True,
+        default_decay=15
     )
     output_sheet_name = "Simulated_Data"
 else:
