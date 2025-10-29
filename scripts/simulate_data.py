@@ -3,46 +3,38 @@ import pandas as pd
 from scipy.optimize import curve_fit
 
 def simulate_stress_strain(
-        E, sigma_y, K, n, L_0, A_0, strain_max=0.3, num_points=100, fit_decay=True, default_decay=15):
+        E, sigma_y, K, n, L_0, A_0, strain_max=0.3, num_points=100,
+        fit_decay=True, default_decay=15):
     """
-    This function generates synthetic tensile test data that includes:
-    - Engineering stress-strain values
-    - True stress-strain values
-    - Elongation and Force
-
-    Hooke's Law (σ = E·ε) models the linear elastic region; the plastic
-    region uses an expanded Hollomon's Law:
-    σ = σ_y + K·(ε - ε_y)^n.
+    Simulate stress-strain data based on material properties.
 
     Parameters:
     -----------
-    E (float):
-        Elastic modulus in GPa.
-    sigma_y (float):
+    E : float
+        Young's Modulus in GPa.
+    sigma_y : float
         Yield stress (strength) in MPa.
-    K (float):
+    K : float
         Strength coefficient in MPa.
-    n (float):
+    n : float
         Strain hardening exponent (unitless).
-    L_0 (float):
+    L_0 : float
         Gauge length in mm.
-    A_0 (float):
+    A_0 : float
         Cross-sectional area in mm².
-    strain_max (float, optional):
+    strain_max : float, optional
         Maximum engineering strain to simulate. Default is 0.3 (30%).
-    num_points (int, optional):
+    num_points : int, optional
         Number of data points to simulate. Default is 100.
+    fit_decay : bool, optional
+        Whether to fit the decay factor for post-UTS behavior. Default is True.
+    default_decay : float, optional
+        Default decay factor to use if fitting fails. Default is 15.
 
     Returns:
     --------
-    pd.DataFrame:
-        A DataFrame containing the following columns:
-        - "Force (N)"
-        - "Elongation (mm)"
-        - "Engineering Strain"
-        - "Engineering Stress (MPa)"
-        - "True Strain"
-        - "True Stress (MPa)"
+    pd.DataFrame
+        A DataFrame containing the simulated stress-strain data.
     """
     # Generate engineering strain from 0 to strain_max
     eng_strain = np.linspace(0, strain_max, num_points)
@@ -97,14 +89,13 @@ def simulate_stress_strain(
         Returns:
         --------
         float
-            The fitted decay factor.
+            The fitted decay factor, uts, and uts_strain.
         """
         uts_index = np.argmax(eng_stress)
         uts_strain = eng_strain[uts_index]
         uts = eng_stress[uts_index]
         post_strain = eng_strain[uts_index:]
         post_stress = eng_stress[uts_index:]
-        default_decay = 15
         try:
             popt, _ = curve_fit(
                 lambda eps, d: exponential_decay(eps, d, uts, uts_strain),
@@ -115,6 +106,7 @@ def simulate_stress_strain(
             )
             return popt[0], uts, uts_strain
         except RuntimeError:
+            # Use the default_decay parameter when curve fitting fails
             return default_decay, uts, uts_strain
 
 
@@ -126,10 +118,11 @@ def simulate_stress_strain(
                         plastic_mpa
     )
 
+
     if fit_decay:
-        decay_factor, uts, uts_strain = fit_decay_factor(eng_strain, eng_stress)
+        decay_factor, uts_fitted, uts_strain = fit_decay_factor(eng_strain, eng_stress)
         post_uts_mask = eng_strain > uts_strain
-        eng_stress[post_uts_mask] = exponential_decay(eng_stress[post_uts_mask], decay_factor, uts, uts_strain)
+        eng_stress[post_uts_mask] = exponential_decay(eng_strain[post_uts_mask], decay_factor, uts_fitted, uts_strain)
 
     # Kinematics and force
     elongation = eng_strain * L_0  # mm
@@ -147,7 +140,7 @@ def simulate_stress_strain(
         "Force (N)": force,
         "Elongation (mm)": elongation,
         "Engineering Strain": eng_strain,
-        "Engineering Stress (GPa)": eng_stress,
+        "Engineering Stress (MPa)": eng_stress,
         "True Strain": true_strain,
-        "True Stress (GPa)": true_stress,
+        "True Stress (MPa)": true_stress,
     })
